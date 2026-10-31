@@ -28,10 +28,10 @@ pub fn run() {
       tauri_plugin_single_instance::Builder::new()
         .dbus_id("app.lepse.Lepse")
         .callback(|app, _args, _cwd| {
-          let _ = app
-            .get_webview_window("main")
-            .expect("no main window")
-            .set_focus();
+          let window = app.get_webview_window("main").expect("no main window");
+          let _ = window.unminimize();
+          let _ = window.show();
+          let _ = window.set_focus();
         })
         .build(),
     );
