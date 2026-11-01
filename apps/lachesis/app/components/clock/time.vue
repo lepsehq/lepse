@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { createReusableTemplate, useLocalStorage } from '@vueuse/core'
 
-defineProps<{ value: string; sub?: string; popout?: boolean }>()
+defineProps<{ value: string; sub?: string; disableHint?: boolean; popout?: boolean }>()
 
 const hasCustomizedAccent = useLocalStorage('hasCustomizedAccent', false)
 
@@ -33,7 +33,7 @@ const [DefineText, ReuseText] = createReusableTemplate()
   <ThemePicker v-else @update:open="hasCustomizedAccent = true">
     <ReuseText />
     <p
-      v-if="!hasCustomizedAccent"
+      v-if="!hasCustomizedAccent && !disableHint"
       class="font-xs text-muted-foreground absolute top-[calc(100%+var(--spacing)*6)] left-1/2 w-max -translate-x-1/2 rounded-sm px-2 text-center font-light tracking-wide backdrop-blur-sm backdrop-brightness-75"
     >
       Right click to change accent

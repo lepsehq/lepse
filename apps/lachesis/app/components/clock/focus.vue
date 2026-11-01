@@ -326,6 +326,7 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
       "
       :sub="focusMethod !== 'pomodoro' && !popout ? formatted.slice(-3, -1) : undefined"
       :popout
+      disable-hint
     />
 
     <!-- Actions -->
