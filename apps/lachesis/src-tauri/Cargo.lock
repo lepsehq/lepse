@@ -5480,7 +5480,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "3.0.0-alpha.5"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "anyhow",
  "bytes",
@@ -5529,7 +5529,7 @@ dependencies = [
 [[package]]
 name = "tauri-build"
 version = "3.0.0-alpha.4"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "anyhow",
  "cargo_toml",
@@ -5551,7 +5551,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "3.0.0-alpha.4"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "base64 0.23.1",
  "brotli",
@@ -5577,7 +5577,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "3.0.0-alpha.4"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "heck 0.5.0",
  "proc-macro2",
@@ -5763,7 +5763,7 @@ dependencies = [
 [[package]]
 name = "tauri-runtime"
 version = "3.0.0-alpha.4"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "cookie",
  "dpi",
@@ -5783,7 +5783,7 @@ dependencies = [
 [[package]]
 name = "tauri-runtime-cef"
 version = "3.0.0-alpha.6"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "base64 0.22.1",
  "cef",
@@ -5821,7 +5821,7 @@ dependencies = [
 [[package]]
 name = "tauri-runtime-wry"
 version = "3.0.0-alpha.5"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "gtk",
  "http",
@@ -5848,7 +5848,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "3.0.0-alpha.4"
-source = "git+https://github.com/lepsehq/tauri?rev=0434538e89ef9586187674754ad46c8b19600407#0434538e89ef9586187674754ad46c8b19600407"
+source = "git+https://github.com/lepsehq/tauri?rev=37c0723f7c9bd421a58dabd84d78f35f7114c2a4#37c0723f7c9bd421a58dabd84d78f35f7114c2a4"
 dependencies = [
  "anyhow",
  "brotli",
