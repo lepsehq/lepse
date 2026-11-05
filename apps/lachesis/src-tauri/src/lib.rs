@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
+#[allow(unused_imports)] // used in cfg blocks
+use tauri::window::Effect;
 use tauri::{
   image::Image,
   menu::{Menu, MenuItem, PredefinedMenuItem},
   tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
-  window::{Effect, EffectsBuilder},
+  window::EffectsBuilder,
   AppHandle, Manager, Result, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 use tauri_plugin_store::StoreExt;
@@ -78,14 +80,19 @@ pub fn run() {
       #[allow(unused_mut)] // mut is used inside cfg gated blocks
       let mut builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .decorations(native_decorations) // native decorations only if preferred by user
-        .title("Lepse")
         .inner_size(1280.0, 800.0) // default app size
         .min_inner_size(448.0, 640.0) // minimum forced size
         .effects(
           EffectsBuilder::new()
-            .effects(vec![Effect::Acrylic, Effect::Titlebar])
+            .effects(vec![
+              #[cfg(target_os = "windows")]
+              Effect::Acrylic,
+              #[cfg(target_os = "macos")]
+              Effect::Titlebar,
+            ])
             .build(),
-        ); // effects for Windows and MacOS respectively
+        ) // effects for Windows and MacOS respectively
+        .title("Lepse");
 
       #[cfg(not(debug_assertions))]
       {

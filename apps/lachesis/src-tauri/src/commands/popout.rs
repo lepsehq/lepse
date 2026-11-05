@@ -1,6 +1,8 @@
+#[allow(unused_imports)] // used in cfg blocks
+use tauri::window::Effect;
 use tauri::{
-  window::{Effect, EffectsBuilder},
-  AppHandle, Emitter, EventTarget, Manager, WebviewUrl, WebviewWindowBuilder,
+  window::EffectsBuilder, AppHandle, Emitter, EventTarget, Manager, WebviewUrl,
+  WebviewWindowBuilder,
 };
 
 #[tauri::command]
@@ -14,15 +16,20 @@ pub fn open_popout(app_handle: AppHandle) {
     let mut builder =
       WebviewWindowBuilder::new(&app_handle, "popout", WebviewUrl::App("popout".into()))
         .decorations(false)
-        .title("Lepse popout")
         .always_on_top(true)
         .inner_size(256.0, 256.0) // default app size
         .resizable(false)
         .effects(
           EffectsBuilder::new()
-            .effects(vec![Effect::Acrylic, Effect::Titlebar])
+            .effects(vec![
+              #[cfg(target_os = "windows")]
+              Effect::Acrylic,
+              #[cfg(target_os = "macos")]
+              Effect::Titlebar,
+            ])
             .build(),
-        ); // effects for Windows and MacOS respectively
+        ) // effects for Windows and MacOS respectively
+        .title("Lepse popout");
 
     #[cfg(not(target_os = "linux"))]
     {
