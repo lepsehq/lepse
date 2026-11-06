@@ -2989,6 +2989,7 @@ name = "lepse"
 version = "0.0.0"
 dependencies = [
  "apple-native-keyring-store",
+ "glib 0.22.10",
  "keyring-core",
  "log",
  "oo7",

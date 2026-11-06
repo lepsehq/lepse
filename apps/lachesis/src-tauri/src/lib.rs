@@ -16,6 +16,9 @@ mod keyring;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+  #[cfg(all(feature = "cef", target_os = "linux"))]
+  glib::set_prgname(Some("lepse"));
+
   let mut builder = tauri::Builder::default();
 
   #[cfg(feature = "cef")]
