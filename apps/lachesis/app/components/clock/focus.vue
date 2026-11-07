@@ -190,29 +190,43 @@ const SHORT_BREAK = 5 * 60 * 1000
 const LONG_BREAK = 15 * 60 * 1000
 
 function skipPomo() {
-  if (pomoState.value === 'work') {
-    pomoCount.value++
-    pomoState.value = pomoCount.value % 4 === 0 ? 'long-break' : 'break'
+  const r = () => {
+    if (pomoState.value === 'work') {
+      pomoCount.value++
+      pomoState.value = pomoCount.value % 4 === 0 ? 'long-break' : 'break'
 
-    // Increment focus session's pomoCount
-    updateSession({
-      pomoCount: (focusSession.value?.pomoCount ?? 0) + 1,
-    })
-    // Update selected task
-    if (task.value)
-      updateTask(task.value.id, {
-        pomoCount: task.value.pomoCount + 1,
+      // If worked, increment focus session's pomoCount
+      stopwatch.elapsed.value &&
+        updateSession({
+          pomoCount: (focusSession.value?.pomoCount ?? 0) + 1,
+        })
+      // Update selected task
+      if (task.value)
+        updateTask(task.value.id, {
+          pomoCount: task.value.pomoCount + 1,
+        })
+      send({
+        title: 'Work session over!',
+        body:
+          pomoState.value === 'break'
+            ? pickRandom(toBreakMessages)
+            : pickRandom(toLongBreakMessages),
       })
-    send({
-      title: 'Work session over!',
-      body:
-        pomoState.value === 'break' ? pickRandom(toBreakMessages) : pickRandom(toLongBreakMessages),
-    })
-  } else {
-    pomoState.value = 'work'
-    send({ title: 'Break time over!', body: pickRandom(toWorkMessages) })
+    } else {
+      pomoState.value = 'work'
+      send({ title: 'Break time over!', body: pickRandom(toWorkMessages) })
+    }
+    stopwatch.reset()
   }
-  stopwatch.reset()
+
+  if (stopwatch.elapsed.value > 0 && pomoState.value === 'work') {
+    dialog({
+      title: 'Are you sure you want to skip?',
+      description: 'Your time will still be counted in your session totals.',
+    }).then((v) => v && r())
+  } else {
+    r()
+  }
 }
 // Skip pomo when stopwatch reaches duration
 watch(stopwatch.elapsed, () => {
@@ -363,7 +377,6 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
         v-if="focusMethod === 'pomodoro'"
         variant="ghost"
         :size="popout ? 'icon-sm' : 'icon'"
-        :disabled="!stopwatch.running.value"
         @click="skipPomo"
       >
         <FastForward />
