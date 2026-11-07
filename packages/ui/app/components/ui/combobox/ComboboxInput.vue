@@ -26,12 +26,16 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
-  <InputGroup>
+  <InputGroup class="w-auto">
     <InputGroupAddon>
       <SearchIcon class="size-4 shrink-0 opacity-50" />
     </InputGroupAddon>
-    <ComboboxInput data-slot="combobox-input" v-bind="{ ...$attrs, ...forwarded }" as-child>
-      <InputGroupInput />
-    </ComboboxInput>
+    <ComboboxInput
+      data-slot="combobox-input"
+      :class="
+        cn('outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)
+      "
+      v-bind="{ ...$attrs, ...forwarded }"
+    />
   </InputGroup>
 </template>

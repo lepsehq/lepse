@@ -22,8 +22,9 @@
     "@vueuse/core": "^15.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cn": "^0.5.2",
     "reka-ui": "^2.10.5",
-    "shadcn-vue": "^2.8.2",
+    "shadcn-vue": "^2.9.0",
     "tailwind-merge": "^3.7.0",
     "vaul-vue": "^0.4.1",
     "vue-sonner": "^2.0.9"
