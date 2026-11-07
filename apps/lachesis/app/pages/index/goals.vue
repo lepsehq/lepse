@@ -139,9 +139,7 @@ const {
             <ScrollArea class="size-full">
               <div class="flex flex-col gap-3 p-4">
                 <Item
-                  v-for="goal in goals?.toSorted((g1, g2) =>
-                    (g2.createdAt ?? '').localeCompare(g1.createdAt ?? '')
-                  )"
+                  v-for="goal in sortByOrder(goals, 'status', ['active', 'completed', 'abandoned'])"
                   :key="goal.id"
                   variant="outline"
                   as-child

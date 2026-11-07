@@ -140,9 +140,12 @@ const {
             <ScrollArea class="size-full">
               <div class="flex flex-col gap-3 p-4">
                 <Item
-                  v-for="task in tasks?.toSorted((t1, t2) =>
-                    (t2.createdAt ?? '').localeCompare(t1.createdAt ?? '')
-                  )"
+                  v-for="task in sortByOrder(tasks, 'status', [
+                    'in_progress',
+                    'todo',
+                    'done',
+                    'canceled',
+                  ])"
                   :key="task.id"
                   variant="outline"
                   size="sm"
