@@ -284,13 +284,22 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
           :side-offset="12"
         >
           <div
-            class="flex max-w-sm min-w-48 cursor-pointer items-center justify-center sm:min-w-64 md:max-w-md"
+            class="flex max-w-xs min-w-48 cursor-pointer items-center justify-center sm:max-w-sm sm:min-w-64 md:max-w-md"
           >
             <p
-              class="flex items-center gap-3 truncate px-6 text-center text-2xl transition-opacity hover:opacity-80"
+              class="flex w-full items-center gap-3 px-6 text-center text-2xl transition-opacity hover:opacity-80"
               :class="[task ? 'font-light' : 'font-extralight italic opacity-60']"
             >
-              {{ task?.name ?? 'No task selected' }}
+              <Tooltip>
+                <TooltipTrigger class="w-full truncate">
+                  {{ task?.name ?? 'No task selected' }}
+                </TooltipTrigger>
+                <TooltipContent v-if="task" side="bottom">
+                  <p class="max-w-xs">
+                    {{ task.name }}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
               <ChevronsUpDown v-if="!task" class="size-4 opacity-60" />
             </p>
           </div>
