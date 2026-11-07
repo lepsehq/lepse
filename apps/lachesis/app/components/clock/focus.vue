@@ -291,11 +291,14 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
               :class="[task ? 'font-light' : 'font-extralight italic opacity-60']"
             >
               <Tooltip>
-                <TooltipTrigger class="w-full truncate">
+                <TooltipTrigger
+                  class="w-full truncate"
+                  :class="{ 'line-through': task?.status === 'done' }"
+                >
                   {{ task?.name ?? 'No task selected' }}
                 </TooltipTrigger>
                 <TooltipContent v-if="task" side="bottom">
-                  <p class="max-w-xs">
+                  <p class="max-w-xs" :class="{ 'line-through': task.status === 'done' }">
                     {{ task.name }}
                   </p>
                 </TooltipContent>

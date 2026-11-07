@@ -211,7 +211,9 @@ const focusTask = () => {
         <Badge v-for="goal in taskGoals" :key="goal.id" variant="secondary" as-child>
           <NuxtLink :to="`/goals/${goal.id}`">
             <Link />
-            {{ goal.name }}
+            <span :class="{ 'line-through': goal.status === 'completed' }">
+              {{ goal.name }}
+            </span>
             <Button
               variant="ghost-destructive"
               size="icon-xs"

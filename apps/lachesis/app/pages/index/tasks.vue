@@ -157,7 +157,9 @@ const {
                       <TaskStatusDropdown :id="task.id" :status="task.status" />
                     </ItemMedia>
                     <ItemContent>
-                      <ItemTitle>{{ task.name }}</ItemTitle>
+                      <ItemTitle :class="{ 'line-through': task.status === 'done' }">
+                        {{ task.name }}
+                      </ItemTitle>
                     </ItemContent>
                     <ItemActions>
                       <ChevronRight class="size-4" />

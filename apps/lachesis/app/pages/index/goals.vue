@@ -146,7 +146,9 @@ const {
                 >
                   <NuxtLink :to="`/goals/${goal.id}`" @click="openSubpage">
                     <ItemContent>
-                      <ItemTitle>{{ goal.name }}</ItemTitle>
+                      <ItemTitle :class="{ 'line-through': goal.status === 'completed' }">
+                        {{ goal.name }}
+                      </ItemTitle>
                       <ItemDescription :class="[!goal.description && 'italic']">
                         {{ goal.description ?? 'No description provided' }}
                       </ItemDescription>
