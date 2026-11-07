@@ -31,7 +31,11 @@ pub fn run() {
     // IMPORTANT: tauri_plugin_single_instance MUST be the first plugin loaded
     builder = builder.plugin(
       tauri_plugin_single_instance::Builder::new()
-        .dbus_id("app.lepse.Lepse")
+        .dbus_id(if cfg!(debug_assertions) {
+          "app.lepse.DEVLepse"
+        } else {
+          "app.lepse.Lepse"
+        })
         .callback(|app, _args, _cwd| {
           let window = app.get_webview_window("main").expect("no main window");
           let _ = window.unminimize();
