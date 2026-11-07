@@ -312,9 +312,7 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
                   {{ task?.name ?? 'No task selected' }}
                 </TooltipTrigger>
                 <TooltipContent v-if="task" side="bottom">
-                  <p class="max-w-xs" :class="{ 'line-through': task.status === 'done' }">
-                    {{ task.name }}
-                  </p>
+                  <p class="max-w-xs">{{ task.name }}</p>
                 </TooltipContent>
               </Tooltip>
               <ChevronsUpDown v-if="!task" class="size-4 opacity-60" />

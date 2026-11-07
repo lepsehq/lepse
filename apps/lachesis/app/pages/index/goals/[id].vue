@@ -218,7 +218,7 @@ const deleteGoal = () => {
                                 {{ task.name }}
                               </ItemTitle>
                             </TooltipTrigger>
-                            <TooltipContent :class="{ 'line-through': task.status === 'done' }">
+                            <TooltipContent>
                               <p>{{ task.name }}</p>
                             </TooltipContent>
                           </Tooltip>
