@@ -4,7 +4,12 @@ import { PublicUser } from '#types/user'
 import { searchLoungeValidator } from '#validators/lounge'
 import { BaseChannel, SocketResponseError } from '@rlanz/socket'
 import { onMessage } from '@rlanz/socket/decorators'
-import type { AuthenticatedSocket, Middleware, PresenceInfo } from '@rlanz/socket/types'
+import type {
+  AuthenticatedSocket,
+  Middleware,
+  PresenceInfo,
+  PresenceMember,
+} from '@rlanz/socket/types'
 
 type ServerEvents = {
   'lounge:resync': null
@@ -17,24 +22,18 @@ export default class LoungeChannel extends BaseChannel<PublicUser, ServerEvents>
   static options = { presence: true }
   static middlewares: Middleware<PublicUser>[] = [
     async (ctx, next) => {
+      // Validate invite code
       const [, result] = await searchLoungeValidator.tryValidate({ id: ctx.params.id })
-
-      let lounge: Lounge | null = null
-      if (result) {
-        lounge = await Lounge.findBy('id', ctx.params.id)
+      if (!result) {
+        throw new SocketResponseError('400: Invalid invite code')
       }
 
-      if (!lounge) {
-        throw new SocketResponseError('404: Lounge does not exist')
-      } else if (ctx.socket.raw.data.hostId === undefined) {
-        // ctx.socket.raw.data.hostId = lounge.userId
-        // this
-      }
       await next()
     },
   ]
 
-  #hostId: number | undefined
+  // each channel instance caches this
+  #hostId: string | undefined
 
   getPresenceInfo(socket: AuthenticatedSocket<PublicUser>): PresenceInfo {
     const { id, ...data } = socket.getUserOrFail()
@@ -45,27 +44,41 @@ export default class LoungeChannel extends BaseChannel<PublicUser, ServerEvents>
     }
   }
 
-  // Support asking resync when the user connects (even on another client)
-  async onJoin(socket: AuthenticatedSocket<PublicUser>) {
-    // Read lounge only once and set it
-    if (!this.#hostId) {
-      const lounge = await Lounge.find(this.params.id)
-      this.#hostId = lounge?.userId
+  async onMemberJoin(socket: AuthenticatedSocket<PublicUser>, member: PresenceMember) {
+    // Ensure lounge exists
+    const lounge = await Lounge.findBy('id', this.params.id)
+    if (!lounge) {
+      throw new SocketResponseError('404: Lounge does not exist')
+    }
+    this.#hostId = String(lounge.userId) // set hostId
+
+    // Disallow second joins to the same lounge
+    const userId = socket.getUserOrFail().id.toString()
+    const connections = this.presence
+      .getLocalSockets(this.channelName)
+      .filter(
+        (connection) => this.presence.getLocalUser(this.channelName, connection.id)?.id === userId
+      ).length
+    if (connections > 1) {
+      throw new SocketResponseError('409: You have already joined this lounge')
     }
 
+    console.info(`[ws:lounge_channel] User '${member.id}' joined Lounge '${this.params.id}'`)
     this.broadcastExcept(socket.id, 'lounge:resync', null)
   }
 
-  async onLeave() {
-    // If lounge channel is empty, delete Lounge
+  async onMemberLeave(_socket: AuthenticatedSocket<PublicUser>, member: PresenceMember) {
+    console.info(`[ws:lounge_channel] User '${member.id}' left Lounge '${this.params.id}'`)
     const count = await this.presence.count(this.channelName)
-    if (count === 0) {
+
+    // If lounge channel is empty, or the host is leaving, delete Lounge
+    if (count === 0 || member.id === this.#hostId) {
       await Lounge.query().where('id', this.params.id).delete()
     }
   }
 
   @onMessage('lounge:host')
-  async sendHost(): Promise<number | undefined> {
+  async sendHost(): Promise<string | undefined> {
     return this.#hostId
   }
 

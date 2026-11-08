@@ -150,8 +150,14 @@ export const useLoungeServer = createSharedComposable(() => {
         if (!channel.subscribed) return // `.subscribed` is false when the subscribe was rejected due to an unsubscribe
         console.error(err)
 
-        if (err instanceof Error && err.message.startsWith('404')) {
-          toast.error('Lounge unavailable! It may have been closed!')
+        if (err instanceof Error) {
+          if (err.message.startsWith('400')) {
+            toast.error('Invalid invite code!')
+          } else if (err.message.startsWith('404')) {
+            toast.error('Lounge unavailable! It may have been closed!')
+          } else if (err.message.startsWith('409')) {
+            toast.error('Unable to join! You may already be joined on another instance!')
+          }
         } else {
           toast.error('Failed to connect to lounge, Please try again later!')
         }

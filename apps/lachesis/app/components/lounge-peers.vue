@@ -31,8 +31,8 @@ const [DefinePeers, ReusePeers] = createReusableTemplate<{ dialog?: boolean }>()
           </Avatar>
         </LoungeTimer>
         <p
-          class="flex items-center gap-1.5 truncate opacity-60 transition-opacity group-hover/lounge-peer:opacity-100 max-lg:hidden"
-          :class="{ 'flex-row-reverse': floating && !dialog }"
+          class="flex items-center gap-1.5 truncate opacity-60 transition-opacity group-hover/lounge-peer:opacity-100"
+          :class="{ 'flex-row-reverse max-lg:hidden': floating && !dialog }"
         >
           {{ p.user.name }}
           <Crown v-if="String(p.user.id) === hostId" class="fill-primary text-primary size-3.5" />

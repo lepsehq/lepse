@@ -16,5 +16,7 @@ export default defineConfig({
       )
       return serialization.data
     },
+    pingInterval: '25s',
+    pingTimeout: '5s',
   },
 })
