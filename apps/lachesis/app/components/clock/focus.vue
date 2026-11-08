@@ -345,10 +345,18 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
     <ClockTime
       :value="
         focusMethod === 'stopwatch'
-          ? formatted.slice(stopwatch.elapsed.value > 3600000 ? 0 : 3, -4)
+          ? stopwatch.elapsed.value >= 3600000
+            ? formatted.slice(0, -7) // HH:MM
+            : formatted.slice(3, -4) // MM:SS
           : formatted
       "
-      :sub="focusMethod !== 'pomodoro' && !popout ? formatted.slice(-3, -1) : undefined"
+      :sub="
+        focusMethod === 'stopwatch' && !popout
+          ? stopwatch.elapsed.value >= 3600000
+            ? formatted.slice(-6, -1) // ss.ms
+            : formatted.slice(-3, -1) // ms
+          : undefined
+      "
       :popout
       disable-hint
     />
