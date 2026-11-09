@@ -59,4 +59,7 @@ tauri-build = { git = "https://github.com/lepsehq/tauri", rev = "37c0723f7c9bd42
 tauri-utils = { git = "https://github.com/lepsehq/tauri", rev = "37c0723f7c9bd421a58dabd84d78f35f7114c2a4" }       # v3.0.0-alpha.5+lepse
 tauri-runtime-wry = { git = "https://github.com/lepsehq/tauri", rev = "37c0723f7c9bd421a58dabd84d78f35f7114c2a4" } # v3.0.0-alpha.5+lepse
 tauri-runtime-cef = { git = "https://github.com/lepsehq/tauri", rev = "37c0723f7c9bd421a58dabd84d78f35f7114c2a4" } # v3.0.0-alpha.5+lepse
+
+tauri-plugin-notification = { git = "https://github.com/lepsehq/tauri-plugins", rev = "137d438206b1a17b2832ddcb8774b83b9384e6c2" } # v3.0.0-alpha.3+lepse
+
 tray-icon = { git = "https://github.com/aervxa/tray-icon", rev = "d2212b4baf8556ee0fe3d3ea65966b506f95a2b7" }
