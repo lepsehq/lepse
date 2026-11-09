@@ -5628,8 +5628,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-notification"
 version = "3.0.0-alpha.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b72896d9e7baa15e08d7fdc5c308929f50cc25483cdf699b59231d0f28f3bedd"
+source = "git+https://github.com/lepsehq/tauri-plugins?rev=137d438206b1a17b2832ddcb8774b83b9384e6c2#137d438206b1a17b2832ddcb8774b83b9384e6c2"
 dependencies = [
  "log",
  "notify-rust",
@@ -5983,7 +5982,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
