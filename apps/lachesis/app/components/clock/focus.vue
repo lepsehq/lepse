@@ -6,7 +6,10 @@ import { toBreakMessages, toLongBreakMessages, toWorkMessages } from '~/lib/pomo
 
 const { popout } = defineProps<{ popout?: boolean }>()
 
-const { send, requestPermission } = useNotification(false)
+const { send, requestPermission } = useNotification({
+  requestOnMount: false,
+  ignoreWhenFocused: true,
+})
 const { user } = useAuth()
 
 const date = getClientDate()
@@ -214,7 +217,10 @@ function skipPomo() {
       })
     } else {
       pomoState.value = 'work'
+      setTimeout(() => {
+
       send({ title: 'Break time over!', body: pickRandom(toWorkMessages) })
+      }, 2000)
     }
     stopwatch.reset()
   }
