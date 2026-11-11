@@ -227,7 +227,7 @@ const deleteGoal = () => {
                           <div
                             class="text-muted-foreground flex gap-3 text-xs leading-none whitespace-nowrap"
                           >
-                            <div class="flex items-center gap-1.5" title="time worked">
+                            <div class="flex items-center gap-1.5" title="time focused">
                               <Clock class="size-3" />
                               <p>
                                 {{

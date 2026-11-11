@@ -2,7 +2,7 @@
 import { StorageSerializers, useDebounceFn, useIntervalFn, useLocalStorage } from '@vueuse/core'
 import { ChevronsUpDown, FastForward, Pause, Play, RefreshCw, X } from '@lucide/vue'
 import { formatDuration, Stopwatch } from '~/lib/time'
-import { toBreakMessages, toLongBreakMessages, toWorkMessages } from '~/lib/pomoMessages'
+import { toBreakMessages, toLongBreakMessages, toFocusMessages } from '~/lib/pomoMessages'
 
 const { popout } = defineProps<{ popout?: boolean }>()
 
@@ -181,10 +181,10 @@ const stopwatchSyncInterval = useIntervalFn(syncStopwatch, 300_000, { immediate:
 
 // ─── Pomo ───────────────────────────────────────────────────────────────────
 
-const pomoStates = ['work', 'break', 'long-break'] as const
-const pomoState = ref<(typeof pomoStates)[number]>('work')
+const pomoStates = ['focus', 'break', 'long-break'] as const
+const pomoState = ref<(typeof pomoStates)[number]>('focus')
 const pomoStateDuration = computed(() =>
-  pomoState.value === 'work' ? POMO_TIME : pomoState.value === 'break' ? SHORT_BREAK : LONG_BREAK
+  pomoState.value === 'focus' ? POMO_TIME : pomoState.value === 'break' ? SHORT_BREAK : LONG_BREAK
 )
 const pomoCount = ref(0)
 
@@ -194,11 +194,11 @@ const LONG_BREAK = 15 * 60 * 1000
 
 function skipPomo() {
   const r = () => {
-    if (pomoState.value === 'work') {
+    if (pomoState.value === 'focus') {
       pomoCount.value++
       pomoState.value = pomoCount.value % 4 === 0 ? 'long-break' : 'break'
 
-      // If worked, increment focus session's pomoCount
+      // If focused, increment focus session's pomoCount
       stopwatch.elapsed.value &&
         updateSession({
           pomoCount: (focusSession.value?.pomoCount ?? 0) + 1,
@@ -209,23 +209,22 @@ function skipPomo() {
           pomoCount: task.value.pomoCount + 1,
         })
       send({
-        title: 'Work session over!',
+        title: 'Focus session over!',
         body:
           pomoState.value === 'break'
             ? pickRandom(toBreakMessages)
             : pickRandom(toLongBreakMessages),
       })
     } else {
-      pomoState.value = 'work'
+      pomoState.value = 'focus'
       setTimeout(() => {
-
-      send({ title: 'Break time over!', body: pickRandom(toWorkMessages) })
+        send({ title: 'Break time over!', body: pickRandom(toFocusMessages) })
       }, 2000)
     }
     stopwatch.reset()
   }
 
-  if (stopwatch.elapsed.value > 0 && pomoState.value === 'work') {
+  if (stopwatch.elapsed.value > 0 && pomoState.value === 'focus') {
     dialog({
       title: 'Are you sure you want to skip?',
       description: 'Your time will still be counted in your session totals.',
@@ -291,7 +290,7 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
         >
           <X class="translate-x-1/5 -translate-y-1/5" />
         </Button>
-        <p class="font-mono text-[10px] tracking-widest uppercase opacity-60">working on</p>
+        <p class="font-mono text-[10px] tracking-widest uppercase opacity-60">focusing on</p>
         <ComboboxCreate
           :items="tasks"
           @select="(i) => selectTask(i.id)"

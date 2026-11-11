@@ -10,7 +10,7 @@ export const toLongBreakMessages = [
   'Go do something else for a while.',
 ]
 
-export const toWorkMessages = [
+export const toFocusMessages = [
   'Goodluck with your next work session.',
   "Back to work, you've got this.",
   'Time to focus again.',
