@@ -10,9 +10,10 @@ defineOptions({
 })
 
 const props = withDefaults(
-  defineProps<TooltipContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps<TooltipContentProps & { class?: HTMLAttributes['class']; hideArrow?: boolean }>(),
   {
     sideOffset: 0,
+    hideArrow: false,
   }
 )
 
@@ -37,6 +38,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       <slot />
 
       <TooltipArrow
+        v-if="!hideArrow"
         class="bg-accent fill-accent border-ring/50 z-50 size-2.5 -translate-y-1/2 rotate-45 rounded-br-xs border border-t-transparent border-l-transparent data-[side=left]:translate-x-[-1.5px] data-[side=right]:translate-x-[1.5px]"
       />
     </TooltipContent>
