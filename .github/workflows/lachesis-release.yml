@@ -1,73 +1,74 @@
-name: Lepse Release
+name: Lepse (Lachesis) Release
 on:
   push:
     tags:
       - 'v*'
 
-defaults:
-  run:
-    working-directory: ./apps/lachesis
-
 jobs:
-  publish-tauri:
+  release-lachesis:
     permissions:
       contents: write
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - platform: 'macos-latest' # for Arm based macs (M1 and above).
-            args: '--target aarch64-apple-darwin'
-          - platform: 'macos-latest' # for Intel based macs.
-            args: '--target x86_64-apple-darwin'
-          - platform: 'ubuntu-22.04'
-            args: ''
-          - platform: 'ubuntu-22.04-arm' # Only available in public repos.
-            args: ''
-          - platform: 'windows-latest'
-            args: ''
+        platform:
+          - macos-26 # macOS arm64
+          - macos-26-intel # macOS x64 (pre M1)
+          - ubuntu-26.04 # Linux x64
+          - ubuntu-26.04-arm # Linux arm64
+          - windows-2025 # Windows x64
+          - windows-11-arm # Windows arm64
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v7
 
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm' # This must match the platform value defined above.
+      - name: Install dependencies (Ubuntu only)
+        if: startsWith(matrix.platform, 'ubuntu')
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+          sudo apt-get install -y build-essential curl wget file libxdo-dev libssl-dev librsvg2-dev libgtk-4-dev
 
-      - uses: pnpm/setup@v3
+      - name: Install pnpm
+        uses: pnpm/setup@v3
         with:
           version: 12.6.0
           runtime: node@24
           cache: true
 
-      - name: install Rust stable
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: Rust cache
+      - name: Setup Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          # This matches tauri's default project layout. Change this if you have a different layout.
-          workspaces: './apps/lachesis/src-tauri -> target'
+          workspaces: 'apps/lachesis/src-tauri -> target' # 'rust build location -> output dir'
 
-      - name: install pnpm dependencies (and it's own deps)
-        working-directory: .
-        run: pnpm install --filter @lepse/lachesis...
+      # Cache CEF locations by key os-arch-cef_version
+      # cache paths listed here: https://v3.tauri.app/develop/cef/#prerequisites
+      - id: cef
+        shell: bash
+        working-directory: apps/lachesis/src-tauri
+        run: echo "version=$(cargo pkgid tauri-runtime-cef)" >> "$GITHUB_OUTPUT" # returns a unique version id
+      - name: Setup CEF cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.os == 'macOS' && '~/Library/Caches/tauri-cef' || runner.os == 'Windows' && '~/AppData/Local/tauri-cef' || '~/.cache/tauri-cef' }}
+          key: cef-${{ runner.os }}-${{ runner.arch }}-${{ steps.cef.outputs.version }}
 
-      - uses: tauri-apps/tauri-action@v1
+      - name: Install app dependencies
+        run: pnpm install --filter @lepse/lachesis... # ... downloads also the deps of the filtered app
+
+      - name: Build Lachesis
+        uses: tauri-apps/tauri-action@v1
         env:
           NUXT_PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: v__VERSION__ # the action automatically replaces __VERSION__ with the app version.
+          projectPath: apps/lachesis
+          args: '--features cef -- --no-default-features'
+          tagName: v__VERSION__
           releaseName: 'Lepse v__VERSION__'
           releaseBody: "Below are all assets for this version. It's recommended to [download the app from the site](https://lepse.app), but if you know what you're doing, go ahead!"
-          projectPath: ./apps/lachesis
-          args: ${{ matrix.args }}
