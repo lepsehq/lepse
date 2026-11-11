@@ -36,6 +36,7 @@ tauri-plugin-notification = "3.0.0-alpha.3"
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "3.0.0-alpha.3"
 tauri-plugin-updater = "3.0.0-alpha.3"
+tauri-plugin-window-state = "3.0.0-alpha.2"    # it's not .3 since a release nor a crate publish was done
 
 [target.'cfg(target_os = "linux")'.dependencies]
 oo7 = "0.6.0"

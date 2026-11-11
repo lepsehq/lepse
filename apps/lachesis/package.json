@@ -33,6 +33,7 @@
     "@tauri-apps/plugin-process": "3.0.0-alpha.3",
     "@tauri-apps/plugin-store": "3.0.0-alpha.3",
     "@tauri-apps/plugin-updater": "3.0.0-alpha.3",
+    "@tauri-apps/plugin-window-state": "3.0.0-alpha.2",
     "@tuyau/core": "^1.2.2",
     "@tuyau/vue-query": "^1.1.0",
     "@vueuse/core": "^14.4.0",

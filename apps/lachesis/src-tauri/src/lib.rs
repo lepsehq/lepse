@@ -10,6 +10,7 @@ use tauri::{
   AppHandle, Manager, Result, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 use tauri_plugin_store::StoreExt;
+use tauri_plugin_window_state::StateFlags;
 
 mod commands;
 mod keyring;
@@ -48,11 +49,18 @@ pub fn run() {
 
   builder = builder
     .plugin(tauri_plugin_notification::init())
-    .plugin(tauri_plugin_updater::Builder::new().build())
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_process::init())
-    .plugin(tauri_plugin_store::Builder::new().build());
+    .plugin(tauri_plugin_store::Builder::new().build())
+    .plugin(tauri_plugin_updater::Builder::new().build())
+    .plugin(
+      tauri_plugin_window_state::Builder::default()
+        .with_filename("window-state.json")
+        // omit VISIBLE since that is controlled manually and is used to avoid a flash loading
+        .with_state_flags(StateFlags::all() - StateFlags::VISIBLE)
+        .build(),
+    );
 
   builder
     .runtime(runtime)
@@ -136,8 +144,6 @@ pub fn run() {
             {
               let _ = w.hide();
               api.prevent_close();
-            } else {
-              w.app_handle().exit(0);
             }
           }
         });

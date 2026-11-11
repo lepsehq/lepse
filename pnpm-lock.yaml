@@ -408,6 +408,9 @@ importers:
       '@tauri-apps/plugin-updater':
         specifier: 3.0.0-alpha.3
         version: 3.0.0-alpha.3
+      '@tauri-apps/plugin-window-state':
+        specifier: 3.0.0-alpha.2
+        version: 3.0.0-alpha.2
       '@tuyau/core':
         specifier: ^1.2.2
         version: 1.2.2(@adonisjs/assembler@8.5.0(typescript@6.0.3))(@adonisjs/core@7.6.0(@adonisjs/assembler@8.5.0(typescript@6.0.3))(@vinejs/vine@4.4.0)(edge.js@6.5.1)(pino-pretty@13.1.3)(supports-color@10.2.2)(youch@4.1.1))
@@ -3425,6 +3428,9 @@ packages:
 
   '@tauri-apps/plugin-updater@3.0.0-alpha.3':
     resolution: {integrity: sha512-7J0W1o7WaZi8H9E9Ixteyf2KE/PgqDGlvT8fzhXoswrCWv8AES7zzwoxLRsK+Uz4tGkEFTqUbz8xyiiJ+N1xUQ==}
+
+  '@tauri-apps/plugin-window-state@3.0.0-alpha.2':
+    resolution: {integrity: sha512-fr0nmywLB8CPOQnWPHuH5+CuLQp42Er3rXSBfMHn2PMTHhE/rfnOd2tdr1OnQZ1j7c2we6D5GlnhTEhy7s3V3g==}
 
   '@tokenizer/inflate@0.4.1':
     resolution: {integrity: sha512-2mAv+8pkG6GIZiF1kNg1jAjh27IDxEPKwdGul3snfztFerfPGI1LjDezZp3i7BElXompqEtPmoPx6c2wgtWsOA==}
@@ -11827,6 +11833,10 @@ snapshots:
       '@tauri-apps/api': 3.0.0-alpha.3
 
   '@tauri-apps/plugin-updater@3.0.0-alpha.3':
+    dependencies:
+      '@tauri-apps/api': 3.0.0-alpha.3
+
+  '@tauri-apps/plugin-window-state@3.0.0-alpha.2':
     dependencies:
       '@tauri-apps/api': 3.0.0-alpha.3
 
