@@ -1,32 +1,30 @@
 <script setup lang="ts">
-const rawGroups = {
+const groups = defineGroups({
   general: [
     {
-      key: 'theme' as const,
+      key: 'theme',
       title: 'Theme',
       description: 'Select your preferred color.',
     },
     {
-      key: 'themeOptions' as const,
+      key: 'themeOptions',
       title: 'Theme options',
       description: 'Control which texts are accented.',
     },
   ],
   background: [
     {
-      key: 'blurBackground' as const,
+      key: 'blurBackground',
       title: 'Blur background',
       description: 'Some backgrounds may be too distracting under text.',
     },
     {
-      key: 'darkenBackground' as const,
+      key: 'darkenBackground',
       title: 'Darken background',
       description: 'Some background may be too bright.',
     },
   ],
-} as const
-type SettingItem = (typeof rawGroups)[keyof typeof rawGroups][number]
-const groups: Record<string, readonly SettingItem[]> = rawGroups
+})
 
 const {
   THEMES,

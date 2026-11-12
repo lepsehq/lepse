@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { getVersion, getName } from '@tauri-apps/api/app'
 import { invoke, isTauri } from '@tauri-apps/api/core'
-import { Image, LogOut, MonitorCog, Palette, Pencil, User, type LucideIcon } from '@lucide/vue'
+import {
+  Image,
+  LogOut,
+  MonitorCog,
+  Palette,
+  Pencil,
+  Timer,
+  User,
+  type LucideIcon,
+} from '@lucide/vue'
 
 const route = useRoute()
 const { user, logoutMutation } = useAuth()
@@ -47,6 +56,11 @@ const sidebar: {
           name: 'Backgrounds',
           path: '/settings/background',
           icon: Image,
+        },
+        {
+          name: 'Focus',
+          path: '/settings/focus',
+          icon: Timer,
         },
         ...(isTauri()
           ? [

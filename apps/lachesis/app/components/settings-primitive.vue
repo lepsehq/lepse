@@ -1,9 +1,9 @@
 <script
   setup
   lang="ts"
-  generic="T extends { title: string; description: string; disabled?: boolean }"
+  generic="T extends { title: string; description: string; disabled?: MaybeRef<boolean> }"
 >
-const props = defineProps<{ groups: Record<string, readonly T[] | T[]> }>()
+const props = defineProps<{ groups: Record<string, T[]> }>()
 </script>
 
 <template>
@@ -12,7 +12,7 @@ const props = defineProps<{ groups: Record<string, readonly T[] | T[]> }>()
       {{ group }}
     </p>
     <template v-for="setting in settings" :key="setting.title">
-      <Item v-if="setting.disabled !== true" size="xs" class="px-0">
+      <Item v-if="!unref(setting.disabled)" size="xs" class="px-0">
         <ItemContent>
           <ItemTitle>{{ setting.title }}</ItemTitle>
           <ItemDescription v-if="setting.description" class="text-xs">
@@ -20,9 +20,12 @@ const props = defineProps<{ groups: Record<string, readonly T[] | T[]> }>()
           </ItemDescription>
         </ItemContent>
         <ItemActions class="self-start">
-          <slot :setting="setting" />
+          <slot :setting />
         </ItemActions>
       </Item>
+      <div v-if="$slots.content" class="pb-2">
+        <slot name="content" :setting />
+      </div>
     </template>
   </div>
 </template>

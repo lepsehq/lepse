@@ -10,26 +10,26 @@ onMounted(() => {
   invoke<boolean>('can_transparent').then((v) => (canTransparent.value = v))
 })
 
-const groups = computed(() => ({
+const groups = defineGroups({
   general: [
     {
-      key: 'windowTransparency' as const,
+      key: 'windowTransparency',
       title: 'Enable window transparency',
       description: "If your OS doesn't have a blur effect, this will look off.",
-      disabled: !canTransparent.value,
+      disabled: computed(() => !canTransparent.value),
     },
     {
-      key: 'nativeDecorations' as const,
+      key: 'nativeDecorations',
       title: 'Native decorations',
       description: 'Use system frame/titlebar (restart required).',
     },
     {
-      key: 'minimizeToTray' as const,
+      key: 'minimizeToTray',
       title: 'Minimize to tray',
       description: 'Closing (clicking X) will minimize to tray instead of fully exiting the app.',
     },
   ],
-}))
+})
 
 const { windowTransparency, nativeDecorations, minimizeToTray } = useSettings()
 </script>
