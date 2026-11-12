@@ -1,50 +1,72 @@
 <script setup lang="ts">
 import { getVersion, getName } from '@tauri-apps/api/app'
 import { invoke, isTauri } from '@tauri-apps/api/core'
-import { platform } from '@tauri-apps/plugin-os'
-import { Image, MonitorCog, Palette, Pencil, User } from '@lucide/vue'
+import { Image, LogOut, MonitorCog, Palette, Pencil, User, type LucideIcon } from '@lucide/vue'
 
 const route = useRoute()
-const { user } = useAuth()
+const { user, logoutMutation } = useAuth()
 const container = useTemplateRef('container')
 
-const headerItem = {
-  name: 'Edit profile',
-  path: '/settings/profile',
-  icon: Pencil,
-  disabled: computed(() => user.value === undefined),
+type Item = {
+  name: string
+  path: string
+  icon: LucideIcon
+  disabled?: ComputedRef<boolean>
 }
-const items = [
-  {
-    name: 'Account',
-    path: '/settings/account',
-    icon: User,
+
+const sidebar: {
+  header: Item
+  groups: { label?: string; items: Item[] }[]
+} = {
+  header: {
+    name: 'Edit profile',
+    path: '/settings/profile',
+    icon: Pencil,
     disabled: computed(() => user.value === undefined),
   },
-  {
-    name: 'Appearance',
-    path: '/settings/appearance',
-    icon: Palette,
-    disabled: computed(() => false),
-  },
-  {
-    name: 'Backgrounds',
-    path: '/settings/background',
-    icon: Image,
-    disabled: computed(() => false),
-  },
-  ...(isTauri()
-    ? [
+  groups: [
+    {
+      items: [
         {
-          name: `System (${platform()})`,
-          path: '/settings/system',
-          icon: MonitorCog,
-          disabled: computed(() => false),
+          name: 'Account',
+          path: '/settings/account',
+          icon: User,
+          disabled: computed(() => user.value === undefined),
         },
-      ]
-    : []),
-]
-const item = computed(() => [...items, headerItem].find((i) => route.path.startsWith(i.path)))
+      ],
+    },
+    {
+      label: 'Experience',
+      items: [
+        {
+          name: 'Appearance',
+          path: '/settings/appearance',
+          icon: Palette,
+        },
+        {
+          name: 'Backgrounds',
+          path: '/settings/background',
+          icon: Image,
+        },
+        ...(isTauri()
+          ? [
+              {
+                name: `System`,
+                path: '/settings/system',
+                icon: MonitorCog,
+              },
+            ]
+          : []),
+      ],
+    },
+  ],
+}
+const activeSidebarItem = computed(() =>
+  // Gather all Items
+  [sidebar.header, ...sidebar.groups.flatMap((g) => g.items)].find((i) =>
+    route.path.startsWith(i.path)
+  )
+)
 
 const open = computed({
   get: () => route.path.startsWith('/settings'),
@@ -96,16 +118,16 @@ onMounted(async () => {
             :collapsible="isMobile ? 'offcanvas' : 'none'"
             class="hidden border-r md:flex"
           >
-            <SidebarHeader v-if="headerItem">
+            <SidebarHeader>
               <SidebarMenuButton
                 size="lg"
                 class="group gap-3 rounded-tl-4xl"
-                :is-active="route.path.startsWith(headerItem.path)"
+                :is-active="activeSidebarItem?.path === sidebar.header.path"
                 close-mobile-on-click
                 as-child
-                :aria-disabled="headerItem.disabled.value"
+                :aria-disabled="sidebar.header.disabled?.value"
               >
-                <NuxtLink :to="!headerItem.disabled.value ? headerItem.path : undefined">
+                <NuxtLink :to="!sidebar.header.disabled?.value ? sidebar.header.path : undefined">
                   <Avatar size="lg">
                     <AvatarImage :src="user?.avatarUrl ?? ''" />
                     <AvatarFallback :delay-ms="SKELETON_DELAY_MS">
@@ -117,8 +139,8 @@ onMounted(async () => {
                     <div
                       class="group-hover:text-foreground text-muted-foreground flex items-center gap-1 text-xs leading-none font-light"
                     >
-                      <span>{{ headerItem.name }}</span>
-                      <component :is="headerItem.icon" class="size-3!" />
+                      <span>{{ sidebar.header.name }}</span>
+                      <component :is="sidebar.header.icon" class="size-3!" />
                     </div>
                   </div>
                 </NuxtLink>
@@ -126,29 +148,57 @@ onMounted(async () => {
             </SidebarHeader>
 
             <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    <SidebarMenuItem v-for="item in items" :key="item.name">
-                      <SidebarMenuButton
-                        :aria-disabled="item.disabled.value"
-                        :is-active="route.path.startsWith(item.path)"
-                        close-mobile-on-click
-                        as-child
-                      >
-                        <NuxtLink :to="!item.disabled.value ? item.path : undefined">
-                          <component :is="item.icon" />
-                          <span>{{ item.name }}</span>
-                        </NuxtLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
+              <template v-for="group in sidebar.groups">
+                <SidebarSeparator class="first:hidden" />
+                <SidebarGroup>
+                  <SidebarGroupLabel v-if="group.label">{{ group.label }}</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuItem v-for="item in group.items" :key="item.name">
+                        <SidebarMenuButton
+                          :aria-disabled="item.disabled?.value"
+                          :is-active="route.path.startsWith(item.path)"
+                          close-mobile-on-click
+                          as-child
+                        >
+                          <NuxtLink :to="!item.disabled?.value ? item.path : undefined">
+                            <component :is="item.icon" />
+                            <span>{{ item.name }}</span>
+                          </NuxtLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </template>
+              <template v-if="user">
+                <SidebarSeparator />
+                <SidebarGroup>
+                  <SidebarMenuButton as-child>
+                    <LoadingButton
+                      variant="ghost"
+                      size="sm"
+                      :loading="logoutMutation.isPending.value"
+                      class="text-destructive! hover:bg-destructive/10! justify-start"
+                      @click="
+                        dialog({
+                          title: 'Are you sure you want to logout?',
+                          description:
+                            'This will end this session and return you to the login page.',
+                          action: 'Logout',
+                        }).then((v) => v && logoutMutation.mutate({}))
+                      "
+                    >
+                      <LogOut />
+                      Log Out
+                    </LoadingButton>
+                  </SidebarMenuButton>
+                </SidebarGroup>
+              </template>
             </SidebarContent>
-            <SidebarFooter v-if="appInfo" class="flex-row items-center px-4 py-2">
+            <SidebarFooter v-if="appInfo" class="flex-row items-center p-3">
               <!-- TODO: make button do smt cool -->
-              <Button variant="ghost" size="icon-lg">
+              <Button tabindex="-1" variant="ghost" size="icon-xl">
                 <img src="/favicon.svg" class="size-7" />
               </Button>
               <div class="text-muted-foreground flex flex-col gap-1.5 *:leading-none *:capitalize">
@@ -161,7 +211,7 @@ onMounted(async () => {
           <section class="md:bg-background relative flex flex-1 flex-col">
             <div class="border-border flex items-center gap-2 border-b px-6 py-4">
               <SidebarTrigger v-if="isMobile" />
-              <DialogTitle class="leading-8">{{ item?.name }}</DialogTitle>
+              <DialogTitle class="leading-8">{{ activeSidebarItem?.name }}</DialogTitle>
             </div>
 
             <ScrollArea class="flex-1">
