@@ -31,6 +31,8 @@ export function navigateBack() {
 
 // IMPORTANT: MUST match tailwind breakpoints
 export const BREAKPOINTS = {
+  '2xs': 448,
+  'xs': 512,
   'sm': 640,
   'md': 768,
   'lg': 1024,

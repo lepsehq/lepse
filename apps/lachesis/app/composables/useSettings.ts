@@ -1,7 +1,7 @@
 import { createSharedComposable, useLocalStorage } from '@vueuse/core'
 
 type Options = { live?: boolean; requiresRestart?: boolean }
-const dirtySettings = ref<Record<string, () => Options>>({})
+const dirtySettings = ref<Record<string, { save: () => Options; reset: () => void }>>({})
 
 /**
  * @returns `[value, controlValue]` where `value` is readonly and `controlValue` is reactive at all times
@@ -35,10 +35,20 @@ const useSetting = <T>(
         // Set initial once if options.requiresRestart
         if (options?.requiresRestart && !initial.value) initial.value = persisted.value
         draft.value = v
-        dirtySettings.value[key] = () => {
-          persisted.value = v
-          draft.value = undefined
-          return options
+        if (v === persisted.value && dirtySettings.value[key] !== undefined) {
+          // Reseting the value to the "original" removes dirty marking
+          delete dirtySettings.value[key]
+        } else {
+          dirtySettings.value[key] = {
+            save: () => {
+              persisted.value = v
+              draft.value = undefined
+              return options
+            },
+            reset: () => {
+              draft.value = undefined
+            },
+          }
         }
       },
     }),
@@ -59,9 +69,15 @@ export const useSettings = createSharedComposable(() => {
   }
 
   const dirty = computed(() => Object.values(dirtySettings.value).length > 0)
-  const saveSettings = () => {
-    for (const fn of Object.values(dirtySettings.value)) {
-      const _ = fn() // TODO: check returned options for requires restart
+  const save = () => {
+    for (const setting of Object.values(dirtySettings.value)) {
+      const _ = setting.save() // TODO: check returned options for requires restart
+    }
+    dirtySettings.value = {}
+  }
+  const reset = () => {
+    for (const setting of Object.values(dirtySettings.value)) {
+      setting.reset()
     }
     dirtySettings.value = {}
   }
@@ -83,6 +99,7 @@ export const useSettings = createSharedComposable(() => {
     ...(values as Values),
     controls: controls as Controls,
     dirty,
-    saveSettings,
+    save,
+    reset,
   }
 })

@@ -2,18 +2,23 @@
 import { getVersion, getName } from '@tauri-apps/api/app'
 import { invoke, isTauri } from '@tauri-apps/api/core'
 import {
+  CircleAlert,
   Image,
   LogOut,
   MonitorCog,
   Palette,
   Pencil,
+  RotateCcwClock,
+  Save,
   Timer,
   User,
   type LucideIcon,
 } from '@lucide/vue'
+import { useWindowSize } from '@vueuse/core'
 
 const route = useRoute()
 const { user, logoutMutation } = useAuth()
+const { width } = useWindowSize()
 const container = useTemplateRef('container')
 
 type Item = {
@@ -82,6 +87,8 @@ const activeSidebarItem = computed(() =>
   )
 )
 
+const { dirty, save, reset } = useSettings()
+
 const open = computed({
   get: () => route.path.startsWith('/settings'),
   set: (value: boolean) => {
@@ -90,6 +97,21 @@ const open = computed({
     }
     return !value
   },
+})
+
+const triggerUnsavedChanges = () => {
+  // TODO: ANIMATE UNSAVED CHANGES ITEM BANNER or the whole settings dialog like discord
+  console.log('SHOULD TRIGGER UNSAVED CHANGES ANIMATION')
+}
+
+const router = useRouter()
+router.beforeEach(() => {
+  // Prevent the user from navigating
+  // NOTE: check for open.value too just incase a quirk has dirty change to true some other way
+  if (open.value && dirty.value) {
+    triggerUnsavedChanges()
+    return false
+  }
 })
 
 // Open the sidebar on mobile only when coming "generally", and not to a specific page (/settings is written to redirect into /account)
@@ -126,7 +148,11 @@ onMounted(async () => {
         <DialogTitle class="sr-only">Settings</DialogTitle>
         <DialogDescription class="sr-only">adjust ur likings and preferences</DialogDescription>
 
-        <SidebarProvider :default-mobile-open class="min-h-full" v-slot="{ isMobile }">
+        <SidebarProvider
+          :default-mobile-open
+          class="min-h-full max-lg:[--sidebar-width:14rem]!"
+          v-slot="{ isMobile }"
+        >
           <Sidebar
             :container="container ?? undefined"
             :collapsible="isMobile ? 'offcanvas' : 'none'"
@@ -229,10 +255,38 @@ onMounted(async () => {
             </div>
 
             <ScrollArea class="flex-1">
-              <div class="flex flex-1 flex-col gap-8 p-6">
+              <div class="flex flex-1 flex-col gap-8 p-6" :class="dirty && 'pb-20'">
                 <NuxtPage />
               </div>
             </ScrollArea>
+
+            <Item
+              v-if="dirty"
+              variant="outline"
+              size="xs"
+              class="bg-card/80 absolute bottom-4 left-1/2 w-max -translate-x-1/2 backdrop-blur-lg"
+            >
+              <ItemMedia variant="icon">
+                <CircleAlert />
+              </ItemMedia>
+              <ItemContent class="mr-4">
+                <ItemTitle>You have unsaved changes!</ItemTitle>
+              </ItemContent>
+              <ItemActions>
+                <Button
+                  variant="outline"
+                  :size="width < BREAKPOINTS.xs ? 'icon-sm' : 'sm'"
+                  @click="reset"
+                >
+                  <RotateCcwClock />
+                  <span class="max-xs:hidden">Reset</span>
+                </Button>
+                <Button size="sm" @click="save">
+                  <Save />
+                  Save
+                </Button>
+              </ItemActions>
+            </Item>
           </section>
         </SidebarProvider>
       </div>
