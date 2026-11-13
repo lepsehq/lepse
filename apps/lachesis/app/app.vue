@@ -10,7 +10,7 @@ $provideSocket($socket, { owned: true })
 
 useLoungeServer()
 
-const { theme, THEME_OPTIONS, themeOptions } = useSettings()
+const { theme, themeOptions } = useSettings()
 
 // manage tanstack/vue-query's window focusManger to be handled by tauri
 // NOTE: On linux, focusChanged runs as true on blur when using alt+tab? (can be ignored since refetchOnFocus is never enabled for everything or something all the time)

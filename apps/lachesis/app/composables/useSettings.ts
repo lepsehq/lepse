@@ -1,60 +1,88 @@
-import { useLocalStorage } from '@vueuse/core'
+import { createSharedComposable, useLocalStorage } from '@vueuse/core'
 
-export const useSettings = () => {
-  // Appearance settings
-  const THEMES = [
-    'white',
-    'beige',
-    'red',
-    'amber',
-    'yellow',
-    'lime',
-    'green',
-    'teal',
-    'cyan',
-    'blue',
-    'indigo',
-    'violet',
-    'magenta',
-    'rose',
-    'espresso',
+type Options = { live?: boolean; requiresRestart?: boolean }
+const dirtySettings = ref<Record<string, () => Options>>({})
+
+/**
+ * @returns `[value, controlValue]` where `value` is readonly and `controlValue` is reactive at all times
+ */
+const useSetting = <T>(
+  storage: 'localstorage' | 'store',
+  key: string,
+  defaultValue: T,
+  options?: Options
+) => {
+  options = { live: true, requiresRestart: false, ...options }
+  const store = storage === 'store' ? useStore : useLocalStorage
+
+  const persisted = store<T>(key, defaultValue) // the persisted saved setting
+  const draft = ref<T | undefined>(undefined) // draft to save changed value when options.live
+  const initial = ref<T | undefined>(undefined) // initial to snapshot value when options.requiresRestart
+  return [
+    // readonly view
+    readonly(
+      computed<T>(
+        () =>
+          (options.requiresRestart ? initial.value : undefined) ??
+          (options.live ? draft.value : undefined) ??
+          persisted.value
+      )
+    ),
+    // control view
+    computed<T>({
+      get: () => draft.value ?? persisted.value /* fallback to persisted for defaultValue */,
+      set: (v) => {
+        // Set initial once if options.requiresRestart
+        if (options?.requiresRestart && !initial.value) initial.value = persisted.value
+        draft.value = v
+        dirtySettings.value[key] = () => {
+          persisted.value = v
+          draft.value = undefined
+          return options
+        }
+      },
+    }),
   ] as const
-  const theme = useLocalStorage<(typeof THEMES)[number]>('theme', 'beige')
+}
 
-  const THEME_OPTIONS = [
-    'data-fixed-color-clock',
-    'data-fixed-color-image',
-    'data-fixed-color-all',
-  ] as const
-  const THEME_OPTION_LABELS = {
-    'data-fixed-color-clock': 'Clock only',
-    'data-fixed-color-image': 'Over image only',
-    'data-fixed-color-all': 'All',
-  } as const satisfies Record<(typeof THEME_OPTIONS)[number], string>
-  const themeOptions = useLocalStorage<(typeof THEME_OPTIONS)[number]>(
-    'themeOptions',
-    'data-fixed-color-clock'
-  )
-
-  const blurBackground = useLocalStorage('blurBackground', true)
-  const darkenBackground = useLocalStorage('darkenBackground', true)
-
-  const appearanceSettings = {
-    THEMES,
-    theme,
-    THEME_OPTIONS,
-    THEME_OPTION_LABELS,
-    themeOptions,
-    blurBackground,
-    darkenBackground,
+export const useSettings = createSharedComposable(() => {
+  const settings = {
+    // Appearance settings
+    theme: useSetting<Theme>('localstorage', 'theme', 'beige'),
+    themeOptions: useSetting<ThemeOption>('localstorage', 'themeOptions', 'data-fixed-color-clock'),
+    blurBackground: useSetting('localstorage', 'blurBackground', true),
+    darkenBackground: useSetting('localstorage', 'darkenBackground', true),
+    // System settings
+    windowTransparency: useSetting('localstorage', 'windowTransparency', false),
+    nativeDecorations: useSetting('store', 'nativeDecorations', false, { requiresRestart: true }),
+    minimizeToTray: useSetting('store', 'minimizeToTray', false),
   }
 
-  // App settings
-  const windowTransparency = useLocalStorage('windowTransparency', false)
-  const nativeDecorations = useStore('nativeDecorations', false)
-  const minimizeToTray = useStore('minimizeToTray', false)
+  const dirty = computed(() => Object.values(dirtySettings.value).length > 0)
+  const saveSettings = () => {
+    for (const fn of Object.values(dirtySettings.value)) {
+      const _ = fn() // TODO: check returned options for requires restart
+    }
+    dirtySettings.value = {}
+  }
 
-  const appSettings = { windowTransparency, nativeDecorations, minimizeToTray }
+  // Types and function to get settings' values and controls
+  type Settings = typeof settings
+  type Values = { [K in keyof Settings]: Settings[K][0] }
+  type Controls = { [K in keyof Settings]: Settings[K][1] }
 
-  return { ...appearanceSettings, ...appSettings }
-}
+  const values: Record<string, unknown> = {}
+  const controls: Record<string, unknown> = {}
+  for (const [key, [v, c]] of Object.entries(settings)) {
+    values[key] = v
+    controls[key] = c
+  }
+
+  return {
+    // Forward the first and second indexes for the values and control values respectively
+    ...(values as Values),
+    controls: controls as Controls,
+    dirty,
+    saveSettings,
+  }
+})

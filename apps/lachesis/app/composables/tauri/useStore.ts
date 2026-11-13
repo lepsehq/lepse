@@ -1,23 +1,22 @@
 import { LazyStore } from '@tauri-apps/plugin-store'
 import { isTauri } from '@tauri-apps/api/core'
-import { useLocalStorage } from '@vueuse/core'
 
 export const useStore = <T>(key: string, defaultValue: T) => {
-  if (!isTauri()) return undefined
+  const raw = ref<T>(defaultValue) // raw value
+  if (!isTauri()) return raw // return empty ref if not in tauri (sake of types)
 
   const store = new LazyStore('settings.json')
-  const state = useLocalStorage<T | undefined>(key, defaultValue) // raw value
 
   // initialize value only once
   callOnce(`init-${key}`, async () => {
-    state.value = (await store.get<T>(key)) ?? defaultValue
+    raw.value = (await store.get<T>(key)) ?? defaultValue
   })
 
   // reactive value with setter
   return computed({
-    get: () => state.value,
+    get: () => raw.value,
     set: (v) => {
-      state.value = v
+      raw.value = v
       store.set(key, v)
     },
   })

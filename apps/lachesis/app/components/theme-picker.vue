@@ -2,7 +2,7 @@
 import { Check, RotateCcw, X } from '@lucide/vue'
 
 const open = ref(false)
-const { THEMES, theme } = useSettings()
+const { theme } = useSettings()
 
 const close = () => {
   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))

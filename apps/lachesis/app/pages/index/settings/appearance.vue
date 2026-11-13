@@ -27,13 +27,7 @@ const groups = defineGroups({
 })
 
 const {
-  THEMES,
-  theme,
-  THEME_OPTIONS,
-  THEME_OPTION_LABELS,
-  themeOptions,
-  blurBackground,
-  darkenBackground,
+  controls: { theme, themeOptions, blurBackground, darkenBackground },
 } = useSettings()
 </script>
 

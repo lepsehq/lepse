@@ -25,6 +25,8 @@ const groups = defineGroups({
     },
   ],
 })
+
+// TODO: Settings
 </script>
 
 <template>

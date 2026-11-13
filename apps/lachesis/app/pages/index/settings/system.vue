@@ -31,7 +31,9 @@ const groups = defineGroups({
   ],
 })
 
-const { windowTransparency, nativeDecorations, minimizeToTray } = useSettings()
+const {
+  controls: { windowTransparency, nativeDecorations, minimizeToTray },
+} = useSettings()
 </script>
 
 <template>
