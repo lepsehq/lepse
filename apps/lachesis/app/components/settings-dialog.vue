@@ -99,9 +99,19 @@ const open = computed({
   },
 })
 
+const unsavedChangesBannerRef = useTemplateRef('unsavedChangesBanner')
+let stopTimeout: NodeJS.Timeout
+let stopBannerShake = ref<null | (() => void)>(null)
 const triggerUnsavedChanges = () => {
-  // TODO: ANIMATE UNSAVED CHANGES ITEM BANNER or the whole settings dialog like discord
-  console.log('SHOULD TRIGGER UNSAVED CHANGES ANIMATION')
+  stopBannerShake.value?.() // cleanup old shake
+  if (unsavedChangesBannerRef.value) {
+    stopBannerShake.value = shake(unsavedChangesBannerRef.value.$el)
+  }
+  clearTimeout(stopTimeout)
+  stopTimeout = setTimeout(() => {
+    stopBannerShake.value?.()
+    stopBannerShake.value = null
+  }, 400)
 }
 
 const router = useRouter()
@@ -262,9 +272,15 @@ onMounted(async () => {
 
             <Item
               v-if="dirty"
+              ref="unsavedChangesBanner"
               variant="outline"
               size="xs"
-              class="bg-card/80 absolute bottom-4 left-1/2 w-max -translate-x-1/2 backdrop-blur-lg"
+              class="absolute bottom-4 left-1/2 w-max -translate-x-1/2 backdrop-blur-lg transition-colors duration-200 ease-in"
+              :class="
+                !!stopBannerShake
+                  ? 'border-destructive bg-[color-mix(in_oklch,var(--destructive)_10%,var(--card))]'
+                  : 'bg-card/80 delay-2000'
+              "
             >
               <ItemMedia variant="icon">
                 <CircleAlert />
