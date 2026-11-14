@@ -1,4 +1,5 @@
 import { createSharedComposable, useLocalStorage } from '@vueuse/core'
+import { isEqual } from 'lodash-es'
 
 type Options = { live?: boolean; requiresRestart?: boolean }
 const dirtySettings = ref<Record<string, { save: () => Options; reset: () => void }>>({})
@@ -16,8 +17,48 @@ const useSetting = <T>(
   const store = storage === 'store' ? useStore : useLocalStorage
 
   const persisted = store<T>(key, defaultValue) // the persisted saved setting
-  const draft = ref<T | undefined>(undefined) // draft to save changed value when options.live
-  const initial = ref<T | undefined>(undefined) // initial to snapshot value when options.requiresRestart
+  // these two take defaultValue and not persisted.value to not share the same object proxy
+  // however, it shouldn't be a problem since the immediate watcher should overwrite that
+  const draft = ref<T>(defaultValue) // control value
+  const initial = ref<T>(defaultValue) // initial to snapshot value when options.requiresRestart
+
+  // set draft to mirror persisted
+  watch(
+    persisted,
+    (v) => {
+      draft.value = structuredClone(toRaw(v)) // clone to not share same obj
+    },
+    { immediate: true }
+  )
+
+  // watch draft (control) to watch for changes
+  watch(
+    draft,
+    (v) => {
+      if (v === undefined) return
+      options?.requiresRestart && initial.value === undefined && (initial.value = persisted.value) // initial is not changing, so doesn't have to be cloned
+
+      const dT = () => delete dirtySettings.value[key]
+
+      // If the value matches the "original", delete the dirty tracker
+      if (isEqual(v, persisted.value)) dT()
+      else {
+        dirtySettings.value[key] = {
+          save: () => {
+            persisted.value = structuredClone(toRaw(v)) // clone to not share same obj
+            dT()
+            return options
+          },
+          reset: () => {
+            draft.value = structuredClone(toRaw(persisted.value)) // reset draft | clone to not share same obj
+            dT()
+          },
+        }
+      }
+    },
+    { deep: true }
+  )
+
   return [
     // readonly view
     readonly(
@@ -29,29 +70,7 @@ const useSetting = <T>(
       )
     ),
     // control view
-    computed<T>({
-      get: () => draft.value ?? persisted.value /* fallback to persisted for defaultValue */,
-      set: (v) => {
-        // Set initial once if options.requiresRestart
-        if (options?.requiresRestart && !initial.value) initial.value = persisted.value
-        draft.value = v
-        if (v === persisted.value && dirtySettings.value[key] !== undefined) {
-          // Reseting the value to the "original" removes dirty marking
-          delete dirtySettings.value[key]
-        } else {
-          dirtySettings.value[key] = {
-            save: () => {
-              persisted.value = v
-              draft.value = undefined
-              return options
-            },
-            reset: () => {
-              draft.value = undefined
-            },
-          }
-        }
-      },
-    }),
+    draft,
   ] as const
 }
 

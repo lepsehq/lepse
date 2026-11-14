@@ -423,6 +423,9 @@ importers:
       change-case:
         specifier: ^5.4.4
         version: 5.4.4
+      lodash-es:
+        specifier: ^4.18.1
+        version: 4.18.1
       motion-v:
         specifier: ^2.3.0
         version: 2.4.0(@vueuse/core@14.4.0(vue@3.5.43(typescript@6.0.3)))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vue@3.5.43(typescript@6.0.3))
@@ -445,6 +448,9 @@ importers:
       '@tauri-apps/cli':
         specifier: 3.0.0-alpha.5
         version: 3.0.0-alpha.5
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@vue/devtools-api':
         specifier: ^8.2.1
         version: 8.2.1
@@ -3521,6 +3527,12 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/lodash-es@4.17.12':
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+
+  '@types/lodash@4.17.27':
+    resolution: {integrity: sha512-VenMRv/eKNrspX9v3H4dbmjsrnCOYdYBG3kxXKk3dG6X+urBGcj2Prww3xw1U5K4FV/mE4h5GbWd0szEKf+9ew==}
 
   '@types/luxon@3.7.5':
     resolution: {integrity: sha512-jJ41Q4z6ZVO260MNDdHfW7+7a5iMiX8Mr6ZJHcmgrvhZha6dz5704o/lF2kKl6URjH6ivEL97w9xS/MgpJEphg==}
@@ -11915,6 +11927,12 @@ snapshots:
   '@types/he@1.2.3': {}
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.27
+
+  '@types/lodash@4.17.27': {}
 
   '@types/luxon@3.7.5': {}
 
