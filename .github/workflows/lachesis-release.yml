@@ -59,6 +59,11 @@ jobs:
       - name: Install app dependencies
         run: pnpm install --filter @lepse/lachesis... # ... downloads also the deps of the filtered app
 
+      # Install patched tauri-cli until tauri-bundler@v3.0.0-alpha.6 is dropped (https://github.com/tauri-apps/tauri/pull/16492)
+      # NOTE: also remove tauriScript from tauri-apps/tauri-action
+      - name: Install patched tauri-cli
+        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri --rev 6620118f0fe85472abfdccea8d99fd0ec9447c3f --locked
+
       - name: Build Lachesis
         uses: tauri-apps/tauri-action@v1
         env:
@@ -66,7 +71,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Linux AppImage bundling fails: https://github.com/tauri-apps/tauri/issues/16204
+          ANYLINUX_LIB_SOURCE: 'https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/d1bb26882eded9576bb0760aeb848179bbf64e9b/useful-tools/lib/anylinux.c'
+          GTK_CLASS_FIX_SOURCE: 'https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/d1bb26882eded9576bb0760aeb848179bbf64e9b/useful-tools/lib/gtk-class-fix.c'
         with:
+          tauriScript: cargo tauri
           projectPath: apps/lachesis
           args: '--features cef -- --no-default-features'
           tagName: v__VERSION__
