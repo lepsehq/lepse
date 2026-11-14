@@ -6,9 +6,13 @@ import { toBreakMessages, toLongBreakMessages, toFocusMessages } from '~/lib/pom
 
 const { popout } = defineProps<{ popout?: boolean }>()
 
+const { timerDurations, enableTimerNotifications } = useSettings()
 const { send, requestPermission } = useNotification({
   requestOnMount: false,
   ignoreWhenFocused: true,
+  disabled: () => {
+    return !enableTimerNotifications.value
+  },
 })
 const { user } = useAuth()
 
@@ -183,14 +187,17 @@ const stopwatchSyncInterval = useIntervalFn(syncStopwatch, 300_000, { immediate:
 
 const pomoStates = ['focus', 'break', 'long-break'] as const
 const pomoState = ref<(typeof pomoStates)[number]>('focus')
-const pomoStateDuration = computed(() =>
-  pomoState.value === 'focus' ? POMO_TIME : pomoState.value === 'break' ? SHORT_BREAK : LONG_BREAK
+const pomoStateDuration = ref(0)
+watch(
+  pomoState,
+  (v) => {
+    const td = timerDurations.value
+    pomoStateDuration.value =
+      (v === 'focus' ? td.focus : v === 'break' ? td.break : td.longBreak) * 60 * 1000
+  },
+  { immediate: true }
 )
 const pomoCount = ref(0)
-
-const POMO_TIME = 25 * 60 * 1000
-const SHORT_BREAK = 5 * 60 * 1000
-const LONG_BREAK = 15 * 60 * 1000
 
 function skipPomo() {
   const r = () => {
@@ -217,9 +224,7 @@ function skipPomo() {
       })
     } else {
       pomoState.value = 'focus'
-      setTimeout(() => {
-        send({ title: 'Break time over!', body: pickRandom(toFocusMessages) })
-      }, 2000)
+      send({ title: 'Break time over!', body: pickRandom(toFocusMessages) })
     }
     stopwatch.reset()
   }

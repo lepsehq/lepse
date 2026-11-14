@@ -10,9 +10,11 @@ import { useWebNotification, useWindowFocus } from '@vueuse/core'
 export const useNotification = ({
   requestOnMount = true,
   ignoreWhenFocused = false,
+  disabled = false,
 }: {
   requestOnMount?: boolean
   ignoreWhenFocused?: boolean
+  disabled?: boolean | (() => boolean)
 } = {}) => {
   const focused = useWindowFocus() // using here instead of in sendWrapper function since its an SPA
 
@@ -20,7 +22,8 @@ export const useNotification = ({
     return async (...args: T) => {
       const isAppFocused = isTauri() ? await getCurrentWebviewWindow().isFocused() : focused.value
 
-      if (ignoreWhenFocused && isAppFocused) return
+      const isDisabled = typeof disabled === 'boolean' ? disabled : disabled()
+      if ((ignoreWhenFocused && isAppFocused) || isDisabled === true) return
       fn(...args)
     }
   }

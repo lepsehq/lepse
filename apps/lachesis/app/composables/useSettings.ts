@@ -81,6 +81,20 @@ export const useSettings = createSharedComposable(() => {
     themeOptions: useSetting<ThemeOption>('localstorage', 'themeOptions', 'data-fixed-color-clock'),
     blurBackground: useSetting('localstorage', 'blurBackground', true),
     darkenBackground: useSetting('localstorage', 'darkenBackground', true),
+    // Focus settings (timer)
+    timerDurations: useSetting('localstorage', 'timerDurations', {
+      enabled: false,
+      focus: 25,
+      break: 5,
+      longBreak: 15,
+    }),
+    // enableTimerAutoskip: useSetting('localstorage', 'enableTimerAutoskip', false),
+    enableTimerNotifications: useSetting('localstorage', 'enableTimerNotifications', true),
+    // enableTimerNotificationSounds: useSetting(
+    //   'localstorage',
+    //   'enableTimerNotificationSounds',
+    //   true
+    // ),
     // System settings
     windowTransparency: useSetting('localstorage', 'windowTransparency', false),
     nativeDecorations: useSetting('store', 'nativeDecorations', false, { requiresRestart: true }),
