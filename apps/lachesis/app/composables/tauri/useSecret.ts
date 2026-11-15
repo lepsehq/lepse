@@ -3,7 +3,7 @@ import { invoke } from '@tauri-apps/api/core'
 export const useSecret = (key: string) => {
   const get = async () => {
     try {
-      return invoke<string>('get_secret', { key })
+      return await invoke<string>('get_secret', { key })
     } catch (err) {
       console.error(err)
     }

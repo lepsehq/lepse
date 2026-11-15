@@ -28,7 +28,7 @@ pub async fn get_secret(key: &str) -> Result<String, String> {
   #[cfg(any(target_os = "windows", target_os = "macos"))]
   {
     let e = keyring_core::Entry::new(KEYRING_SERVICE, key).map_err(|e| e.to_string())?;
-    e.get_password().map_err(|e| e.to_string())
+    e.get_password().or_else(|_| Ok(String::new()))
   }
 }
 
