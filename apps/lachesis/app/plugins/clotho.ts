@@ -5,9 +5,6 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { createTuyauVueQueryClient } from '@tuyau/vue-query'
 import { isTauri } from '@tauri-apps/api/core'
-import { Socket } from '@rlanz/socket/client'
-import type { AppSocket } from '@lepse/clotho/socket'
-import { createSocketComposables } from '@rlanz/socket/client/vue'
 
 export default defineNuxtPlugin({
   name: 'clotho',
@@ -60,6 +57,7 @@ export default defineNuxtPlugin({
               if (token) {
                 request.headers.set('Authorization', `Bearer ${token}`)
               }
+              import.meta.dev && request.headers.set('is-app', 'true')
             }
             request.headers.set('x-client-date', getClientDate())
           },
@@ -81,20 +79,12 @@ export default defineNuxtPlugin({
       client,
     })
 
-    // SOCKET
-    const token = isTauri() ? await useSecret('credentials').get() : undefined
-    const url = config.public.apiUrl + (isTauri() ? `?token=${token}` : '')
-    const socket = new Socket<AppSocket>({ url })
-    const socketComposables = createSocketComposables<AppSocket>()
-
     return {
       provide: {
         queryClient, // queries without context (in plugins for example)
         persistQueryClientProps, // for useCacheSyncQueryClient
         client, // for overriding and using client directly instead of type safe options
         api, // for type-safe query and mutation options
-        socket, // for socket
-        ...socketComposables, // socket composables to use socket
       },
     }
   },

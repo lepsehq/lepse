@@ -6,9 +6,10 @@ import { PopoverClose } from 'reka-ui'
 const source = inject(bubbleNavSourceKey)
 
 const { user } = useAuth()
-const { $useSocketState, $client } = useNuxtApp()
+const { $client } = useNuxtApp()
+const { useSocketState } = await useSocket()
 const { id, connection, join, leave } = useLoungeClient()
-const { state } = $useSocketState()
+const { state } = useSocketState()
 
 const loungeId = ref('') // just for joining
 const censoredId = computed(() => (id.value || '').replace(/[^-](?<=-.*)/g, '*'))

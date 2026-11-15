@@ -4,9 +4,8 @@ import { isTauri } from '@tauri-apps/api/core'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { camelCase } from 'change-case'
 
-const { $provideSocket, $socket } = useNuxtApp()
-
-$provideSocket($socket, { owned: true })
+const { provideSocket, socket } = await useSocket()
+provideSocket(socket, { owned: true })
 
 useLoungeServer()
 

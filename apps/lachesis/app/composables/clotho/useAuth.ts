@@ -18,6 +18,10 @@ export const useAuth = () => {
       onSuccess: ({ data }) => {
         if (isTauri() && data.token) {
           useSecret('credentials').set(data.token)
+          // TODO: find workaround for socket to not need re-evaluation of url (maybe since cef, ditch keyring and use http cookies)
+          setTimeout(() => {
+            reloadNuxtApp() // reload nuxt app since socket needs to reeveluate the secret for the url
+          }, 100)
         }
         $queryClient.setQueryData($api.account.profile.show.queryKey(), { data: data.user })
       },
