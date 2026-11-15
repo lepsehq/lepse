@@ -110,18 +110,8 @@ const scrollToNews = () => {
     class="pointer-events-none absolute -z-10 flex w-full flex-col saturate-150 select-none dark:brightness-75 [&_img]:h-224 [&_img]:object-cover"
   >
     <div class="contents *:mask-b-from-0%">
-      <img
-        fetchpriority="high"
-        src="/images/hero-dark.webp"
-        alt=""
-        class="not-dark:hidden"
-      />
-      <img
-        fetchpriority="high"
-        src="/images/hero-light.webp"
-        alt=""
-        class="dark:hidden"
-      />
+      <img fetchpriority="high" src="/images/hero-dark.webp" alt="" class="not-dark:hidden" />
+      <img fetchpriority="high" src="/images/hero-light.webp" alt="" class="dark:hidden" />
     </div>
     <div
       class="contents *:rotate-180 *:mask-t-from-35% *:mask-t-to-60% *:mask-b-from-0% sm:*:mask-t-to-45% lg:*:mask-t-to-50%"
@@ -147,19 +137,15 @@ const scrollToNews = () => {
       <!-- Dowload buttons -->
       <div class="flex flex-wrap justify-center gap-2">
         <ButtonGroup aria-label="Download options">
-          <Button
-            size="xl"
-            @click="(isWindows || isMacOS) && scrollToDownloads()"
-            :as-child="isWindows || isMacOS"
-          >
+          <Button size="xl" @click="isLinux && scrollToDownloads()" :as-child="!isLinux">
             <component
-              :is="isWindows || isMacOS ? 'a' : 'div'"
+              :is="isLinux ? 'div' : 'a'"
               :href="
                 platformDownloads.find(
                   (p) => p.name === (isWindows ? 'Windows' : isMacOS ? 'macOS' : '')
                 )?.actions[0]?.link
               "
-              :class="{ contents: !isWindows || !isMacOS }"
+              :class="{ contents: isLinux }"
             >
               <component
                 :is="
