@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import app from '@adonisjs/core/services/app'
 import type { NextFn } from '@adonisjs/core/types/http'
 
 export default class SilentIsAppMiddleware {
@@ -8,8 +9,11 @@ export default class SilentIsAppMiddleware {
      */
     const origin = ctx.request.header('Origin')
 
+    const appInDev = ctx.request.headers()['is-app'] === 'true'
     // Share app origins as isApp
-    ctx.isApp = ['http://tauri.localhost', 'tauri://localhost'].includes(origin || '')
+    ctx.isApp =
+      ['http://tauri.localhost', 'tauri://localhost'].includes(origin || '') ||
+      (app.inDev && appInDev) // in development, treat everything as app
 
     return next()
   }
