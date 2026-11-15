@@ -11,3 +11,6 @@ allowBuilds:
 
 patchedDependencies:
   '@adonisjs/auth@10.1.0': patches/@adonisjs__auth@10.1.0.patch
+
+overrides:
+  typescript: ^6
