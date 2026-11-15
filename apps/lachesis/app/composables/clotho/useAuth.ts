@@ -1,5 +1,4 @@
 import { hashKey, Query, useMutation, useQuery } from '@tanstack/vue-query'
-import { isTauri } from '@tauri-apps/api/core'
 
 export const useAuth = () => {
   const { $api, $queryClient } = useNuxtApp()
@@ -16,13 +15,7 @@ export const useAuth = () => {
   const loginMutation = useMutation(
     $api.auth.accessToken.store.mutationOptions({
       onSuccess: ({ data }) => {
-        if (isTauri() && data.token) {
-          useSecret('credentials').set(data.token)
-          // TODO: find workaround for socket to not need re-evaluation of url (maybe since cef, ditch keyring and use http cookies)
-          setTimeout(() => {
-            reloadNuxtApp() // reload nuxt app since socket needs to reeveluate the secret for the url
-          }, 100)
-        }
+        useSocket().socket.connect()
         $queryClient.setQueryData($api.account.profile.show.queryKey(), { data: data.user })
       },
     })
@@ -31,9 +24,7 @@ export const useAuth = () => {
   const signupMutation = useMutation(
     $api.auth.newAccount.store.mutationOptions({
       onSuccess: ({ data }) => {
-        if (isTauri() && data.token) {
-          useSecret('credentials').set(data.token)
-        }
+        useSocket().socket.connect()
         $queryClient.setQueryData($api.account.profile.show.queryKey(), { data: data.user })
       },
     })
@@ -43,14 +34,11 @@ export const useAuth = () => {
     $api.auth.accessToken.destroy.mutationOptions({
       // logout should never fail, and should fallback to be able to be done offline
       onSettled: () => {
-        if (isTauri()) {
-          useSecret('credentials').del()
-        }
+        useSocket().socket.disconnect()
 
         const safeQueries = (query: Query) => {
           return [''].includes(hashKey(query.queryKey))
         }
-
         // Reset queries to remove all data
         $queryClient.resetQueries({ predicate: (q) => !safeQueries(q) })
       },

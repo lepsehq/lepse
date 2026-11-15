@@ -83,7 +83,7 @@ export const useLoungeServer = createSharedComposable(() => {
   })
   const connection = useLocalStorage<Connection>(LOUNGE_CONNECTION_KEY, 'disconnected')
 
-  const { $socket } = useNuxtApp()
+  const { socket } = useSocket()
 
   loungeId.value = null // reset connected lounge (to handle with stale connects)
   loungeHostId.value = null
@@ -97,7 +97,7 @@ export const useLoungeServer = createSharedComposable(() => {
     connection.value = 'disconnected'
 
     if (!id) return
-    const channel = $socket.channel('lounge/:id', { id })
+    const channel = socket.channel('lounge/:id', { id })
     const sync = (re?: boolean) => {
       channel.send('lounge:sync', { timer: timer.value })
       if (re) {

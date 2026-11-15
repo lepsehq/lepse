@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 #[allow(unused_imports)] // used in cfg blocks
 use tauri::window::Effect;
 use tauri::{
@@ -13,7 +11,6 @@ use tauri_plugin_store::StoreExt;
 use tauri_plugin_window_state::StateFlags;
 
 mod commands;
-mod keyring;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -65,9 +62,6 @@ pub fn run() {
   builder
     .runtime(runtime)
     .invoke_handler(tauri::generate_handler![
-      keyring::commands::get_secret,
-      keyring::commands::set_secret,
-      keyring::commands::delete_secret,
       commands::other::get_os,
       commands::other::can_transparent,
       commands::popout::open_popout,
@@ -80,9 +74,6 @@ pub fn run() {
             .build(),
         )?;
       }
-
-      // TODO: Handle errors (native dialogs maybe?)
-      keyring::init_keyring_store(&HashMap::new())?;
 
       let native_decorations = app
         .store("settings.json")

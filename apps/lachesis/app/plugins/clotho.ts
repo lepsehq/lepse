@@ -52,13 +52,6 @@ export default defineNuxtPlugin({
       hooks: {
         beforeRequest: [
           async (request) => {
-            if (isTauri()) {
-              const token = await useSecret('credentials').get()
-              if (token) {
-                request.headers.set('Authorization', `Bearer ${token}`)
-              }
-              import.meta.dev && request.headers.set('is-app', 'true')
-            }
             request.headers.set('x-client-date', getClientDate())
           },
         ],

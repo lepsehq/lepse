@@ -7,7 +7,7 @@ const source = inject(bubbleNavSourceKey)
 
 const { user } = useAuth()
 const { $client } = useNuxtApp()
-const { useSocketState } = await useSocket()
+const { useSocketState } = useSocket()
 const { id, connection, join, leave } = useLoungeClient()
 const { state } = useSocketState()
 
@@ -23,13 +23,6 @@ const createLounge = () =>
     .catch((err) => {
       toast.error('Failed to create Lounge!', { description: err.message })
     })
-
-const copyId = () => {
-  id.value &&
-    navigator.clipboard.writeText(id.value).then(() => {
-      toast.success('Lounge code copied!')
-    })
-}
 
 const { copy, copied } = useClipboard()
 </script>
