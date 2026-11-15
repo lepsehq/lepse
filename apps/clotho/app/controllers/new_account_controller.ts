@@ -20,14 +20,14 @@ export default class NewAccountController {
     response.cookie('auth_token', tokenValue, {
       path: '/',
       httpOnly: true,
-      secure: app.inProduction, // NOTE: for working in development
-      sameSite: 'lax', // NOTE: for developemnt, the backend must be running on the same host as the frontend
+      secure: app.inProduction || isApp, // secure only when in prod and NOT in an app
+      sameSite: isApp ? 'none' : 'lax', // applications don't run on the same site
       maxAge: '1y',
     })
 
     return serialize({
       user: UserTransformer.transform(user),
-      ...(isApp ? { token: tokenValue } : {}),
+      // ...(isApp ? { token: tokenValue } : {}),
     })
   }
 }
