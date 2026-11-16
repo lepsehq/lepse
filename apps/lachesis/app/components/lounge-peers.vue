@@ -43,10 +43,11 @@ const [DefinePeers, ReusePeers] = createReusableTemplate<{ dialog?: boolean }>()
 
   <div
     class="flex max-h-full flex-col gap-3"
-    :class="{
-      'absolute top-1/2 -translate-y-1/2 pl-4 max-sm:left-0 sm:right-0 sm:pr-4 lg:max-w-64':
-        floating,
-    }"
+    :class="
+      floating
+        ? 'absolute top-1/2 -translate-y-1/2 pl-4 max-sm:left-0 sm:right-0 sm:pr-4 lg:max-w-64'
+        : 'p-1'
+    "
   >
     <ReusePeers />
 
