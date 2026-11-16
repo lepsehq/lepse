@@ -27,7 +27,6 @@ export default class NewAccountController {
 
     return serialize({
       user: UserTransformer.transform(user),
-      // ...(isApp ? { token: tokenValue } : {}),
     })
   }
 }

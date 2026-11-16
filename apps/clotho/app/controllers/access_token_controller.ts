@@ -12,7 +12,6 @@ export default class AccessTokenController {
     const token = await User.accessTokens.create(user)
     const tokenValue = token.value!.release()
 
-    // if (!isApp) {
     response.cookie('auth_token', tokenValue, {
       path: '/',
       httpOnly: true,
@@ -20,11 +19,9 @@ export default class AccessTokenController {
       sameSite: isApp ? 'none' : 'lax', // applications don't run on the same site
       maxAge: '1y',
     })
-    // }
 
     return serialize({
       user: UserTransformer.transform(user),
-      // ...(isApp ? { token: tokenValue } : {}),
     })
   }
 
