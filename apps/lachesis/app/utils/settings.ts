@@ -33,3 +33,9 @@ export function defineGroups<const T extends Record<string, object[]>>(
 ): Record<string, T[keyof T][number][]> {
   return groups
 }
+
+export const TIMER_DURATIONS = {
+  focus: 25,
+  break: 5,
+  longBreak: 15,
+}

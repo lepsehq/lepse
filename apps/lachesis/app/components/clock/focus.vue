@@ -189,9 +189,16 @@ const pomoStates = ['focus', 'break', 'long-break'] as const
 const pomoState = ref<(typeof pomoStates)[number]>('focus')
 const pomoStateDuration = ref(0)
 watch(
-  pomoState,
-  (v) => {
-    const td = timerDurations.value
+  [
+    pomoState,
+    // Additional refs to watch:
+    timerDurations, // to update the duration when the setting changes
+    stopwatch.running, // to update the duration when the timer is reset
+  ],
+  ([v]) => {
+    // don't update the duration if stopwatch is running or there is elapsed time
+    if (stopwatch.running.value || stopwatch.elapsed.value > 0) return
+    const td = timerDurations.value.enabled ? timerDurations.value : TIMER_DURATIONS
     pomoStateDuration.value =
       (v === 'focus' ? td.focus : v === 'break' ? td.break : td.longBreak) * 60 * 1000
   },
