@@ -12,7 +12,10 @@ watch(
     if (props.timer) {
       // stop the stopwatch if it's running, to avoid #tick overwriting elapsed's value
       stopwatch.running.value && stopwatch.stop()
-      stopwatch.elapsed.value = props.timer?.elapsed
+      // measure how much timer offset happened (only if timer running, paused timers have no offsetting)
+      const delta =
+        props.timer.running && props.timer.timestamp ? Date.now() - props.timer.timestamp : 0
+      stopwatch.elapsed.value = props.timer.elapsed + delta
       // Toggle playing state if doesn't match
       if (props.timer.running !== stopwatch.running.value) {
         stopwatch.toggle()

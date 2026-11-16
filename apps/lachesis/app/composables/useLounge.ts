@@ -39,7 +39,8 @@ export const useLoungeClient = () => {
   const join = (id: string) => (loungeId.value = id)
   const leave = () => (loungeId.value = null)
 
-  const sync = (t: Timer) => (timer.value = t)
+  const sync = (t: Omit<NonNullable<Timer>, 'timestamp'> | null) =>
+    (timer.value = t ? { ...t, timestamp: Date.now() } : null)
 
   const onUpdateSync = (callback: () => void, popout?: boolean) => {
     useEventBus(loungeResyncKey).on(callback)
