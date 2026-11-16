@@ -1,8 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import { Check, RotateCcw, X } from '@lucide/vue'
 
 const open = ref(false)
-const { theme } = useSettings()
+const {
+  theme,
+  controls: { theme: themeControl },
+  save,
+} = useSettings()
+
+const selectTheme = (t: (typeof THEMES)[number]) => {
+  themeControl.value = t
+  save()
+}
 
 const close = () => {
   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
@@ -48,7 +57,7 @@ const close = () => {
           :class="[i === 0 ? 'z-10' : 'z-0']"
           :data-theme="t"
         >
-          <ContextMenuItem class="contents" @select="theme = t">
+          <ContextMenuItem class="contents" @select="selectTheme(t)">
             <Motion
               as="button"
               :initial="{ opacity: 0, scale: 0.8 }"

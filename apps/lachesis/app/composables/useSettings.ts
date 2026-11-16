@@ -56,7 +56,7 @@ const useSetting = <T>(
         }
       }
     },
-    { deep: true }
+    { deep: true, flush: 'sync' }
   )
 
   return [
