@@ -57,13 +57,16 @@ export type FocusHandoff = { elapsed: number; running: boolean } | null
 export const sortByOrder = <T extends { createdAt?: string | null }, K extends keyof T>(
   items: T[] = [],
   key?: K,
-  order: T[K][] = []
+  order: T[K][] = [],
+  options?: { reverse?: boolean }
 ) => {
   // Give the rank based on the index position
   const rank = (item: T) => (key ? order.indexOf(item[key]) : 0)
 
   return items.toSorted(
     // if rank equals out, fallback to sorting by createdAt date (ISO string)
-    (a, b) => rank(a) - rank(b) || (b.createdAt ?? '').localeCompare(a.createdAt ?? '')
+    (a, b) =>
+      rank(a) - rank(b) ||
+      (b.createdAt ?? '').localeCompare(a.createdAt ?? '') * (options?.reverse ? -1 : 1)
   )
 }

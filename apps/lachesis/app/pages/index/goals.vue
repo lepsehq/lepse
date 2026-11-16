@@ -139,7 +139,12 @@ const {
             <ScrollArea class="size-full">
               <div class="flex flex-col gap-3 p-4">
                 <Item
-                  v-for="goal in sortByOrder(goals, 'status', ['active', 'completed', 'abandoned'])"
+                  v-for="goal in sortByOrder(
+                    goals,
+                    'status',
+                    ['active', 'completed', 'abandoned'],
+                    { reverse: true }
+                  )"
                   :key="goal.id"
                   variant="outline"
                   as-child
