@@ -1,56 +1,25 @@
-# Clotho (@lepse/clotho)
+<h1 align="center">Clotho <i>(@lepse/clotho)</i></h1>
 
-This is the AdonisJS backend for lepse.
+<br />
 
-> [!NOTE]
-> Below are parts of the default README I deemed useful.
+<p align="center"><b>Lepse's backend</b><p>
 
----
+> This application is better run from the monorepo root (usually with lachesis).
 
-## 🚀 Quick Start
+## Setup
 
-### From the Monorepo Root
-
-```bash
-# Install dependencies
-npm install
-
-# Run the development server (both backend and frontend)
-npm run dev
-
-# Run tests
-npm run test
-
-# Type check all apps
-npm run typecheck
-
-# Lint all apps
-npm run lint
-
-# Build for production
-npm run build
-```
-
-### Backend Only (from apps/backend)
+Make sure to install dependencies:
 
 ```bash
-# Run the development server with hot reload
-node ace serve --hmr
-
-# Run tests
-node ace test
-
-# Type check
-npm run typecheck
-
-# Lint your code
-npm run lint
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+pnpm install
 ```
 
-Your API will be running at `http://localhost:3333`
+## Development Server
+
+Start the development server on `http://0.0.0.0:3333`:
+
+```bash
+pnpm dev
+```
+
+ps. this is an AdonisJS API backend, look at the [documentation](https://docs.adonisjs.com/introduction) to learn more.

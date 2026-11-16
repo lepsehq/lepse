@@ -1,78 +1,33 @@
-# Lachesis (@lepse/lachesis)
+<h1 align="center">Lachesis <i>(@lepse/lachesis)</i></h1>
 
-This is the AdonisJS backend for lepse.
+<br />
 
-> [!NOTE]
-> Below are parts of the default README I deemed useful.
+<p align="center"><b>Lepse's (web)application</b><p>
 
----
+> This application is better run from the monorepo root (usually with clotho).
 
 ## Setup
 
 Make sure to install dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
 
-Start the development server on `http://localhost:3000`:
+Start the development server on `http://0.0.0.0:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Tauri
 
-Build the application for production:
+Open the Tauri application (this autostarts the development server):
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+pnpm tdev:cef # `tdev` points to WRY which is just kept for legacy reasons
 ```
 
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
+ps. this is Nuxt CSR application, look at the [Nuxt documentation](https://nuxt.com/docs/4.x) to learn more.
