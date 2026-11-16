@@ -199,7 +199,7 @@ watch(
 )
 const pomoCount = ref(0)
 
-function skipPomo() {
+function skipPomo(force: boolean = false) {
   const r = () => {
     if (pomoState.value === 'focus') {
       pomoCount.value++
@@ -229,7 +229,7 @@ function skipPomo() {
     stopwatch.reset()
   }
 
-  if (stopwatch.elapsed.value > 0 && pomoState.value === 'focus') {
+  if (!force && stopwatch.elapsed.value > 0 && pomoState.value === 'focus') {
     dialog({
       title: 'Are you sure you want to skip?',
       description: 'Your time will still be counted in your session totals.',
@@ -241,7 +241,7 @@ function skipPomo() {
 // Skip pomo when stopwatch reaches duration
 watch(stopwatch.elapsed, () => {
   if (focusMethod.value === 'pomodoro' && stopwatch.elapsed.value >= pomoStateDuration.value)
-    skipPomo()
+    skipPomo(true)
 })
 
 // ─── Sync ───────────────────────────────────────────────────────────────────
@@ -393,7 +393,7 @@ defineExpose({ focusMethod, toggleFocusMethod, pomoState })
         v-if="focusMethod === 'pomodoro'"
         variant="ghost"
         :size="popout ? 'icon-sm' : 'icon'"
-        @click="skipPomo"
+        @click="skipPomo()"
       >
         <FastForward />
       </Button>
