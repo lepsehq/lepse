@@ -4,6 +4,6 @@ definePageMeta({ layout: 'shell' })
 
 <template>
   <div class="grid flex-1 place-content-center">
-    <p>TODO: About</p>
+    <p class="text-2xl font-light tracking-wide italic opacity-60">There's nothing here yet.</p>
   </div>
 </template>
