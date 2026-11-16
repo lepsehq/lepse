@@ -10,6 +10,7 @@ import LogosMicosoftStore from '@/components/logos/microsoft-store.vue'
 import LogosReddit from '@/components/logos/reddit.vue'
 import LogosUbuntu from '@/components/logos/ubuntu.vue'
 import LogosWindows from '@/components/logos/windows.vue'
+import { createReusableTemplate } from '@vueuse/core'
 
 definePageMeta({ layout: 'shell' })
 
@@ -95,6 +96,14 @@ const platformDownloads = computed(() => [
     ],
   },
 ])
+
+/* ---------------------------------- FEATURES ----------------------------------  */
+
+const [DefineFeatureCard, ReuseFeatureCard] = createReusableTemplate<{
+  title: string
+  description: string
+  src: string
+}>()
 
 /* ------------------------------------ NEWS ------------------------------------  */
 
@@ -201,14 +210,59 @@ const scrollToNews = () => {
         Powerful and beautiful for all your needs
       </p>
 
-      <Card class="bg-card/60 w-full max-w-3xl">
-        <Empty>
-          <EmptyHeader>
-            <EmptyTitle>Features</EmptyTitle>
-            <EmptyDescription>Coming soon.</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      </Card>
+      <DefineFeatureCard v-slot="{ title, description, src }">
+        <Card class="bg-card/60 justify-between gap-0">
+          <img
+            :src
+            draggable="false"
+            class="mask-r-from-20% mask-b-from-40% select-none not-dark:grayscale not-dark:invert"
+          />
+          <CardHeader class="gap-1">
+            <CardTitle class="text-xl">{{ title }}</CardTitle>
+            <CardDescription>{{ description }}</CardDescription>
+          </CardHeader>
+        </Card>
+      </DefineFeatureCard>
+
+      <div
+        class="grid w-full max-w-sm gap-4 sm:max-w-xl sm:grid-cols-2 sm:grid-rows-13 md:max-w-2xl lg:max-w-3xl"
+      >
+        <ReuseFeatureCard
+          title="Tasks"
+          description="Manage your focus and productivity."
+          src="/images/app-tasks.png"
+          class="order-1 row-span-5 sm:order-1"
+        />
+        <ReuseFeatureCard
+          title="Goals"
+          description="Manage what matters."
+          src="/images/app-goals.png"
+          class="order-4 row-span-7 sm:order-2"
+        />
+        <ReuseFeatureCard
+          title="Focus timer"
+          description="A Pomodoro or stopwatch timer to keep track of your focused time on a task."
+          src="/images/app-focus.png"
+          class="order-2 row-span-8 sm:order-3"
+        />
+        <ReuseFeatureCard
+          title="Lounges"
+          description="Focus together with your friends."
+          src="/images/app-lounge.png"
+          class="order-3 row-span-6 sm:order-4"
+        />
+
+        <Card
+          class="from-primary/16 to-card/60 order-5 w-full max-w-3xl bg-transparent bg-linear-to-br sm:col-span-2"
+        >
+          <Empty class="py-6">
+            <EmptyHeader>
+              <EmptyTitle>And many more</EmptyTitle>
+              <EmptyDescription>Coming soon...</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </Card>
+      </div>
     </div>
 
     <!-- Downloads -->
