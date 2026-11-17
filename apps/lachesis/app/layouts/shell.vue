@@ -37,66 +37,108 @@ onBeforeUnmount(() => {
   unlisten?.()
 })
 
+// app edge resize (top will be ignored)
+const resize = async (
+  event: MouseEvent,
+  direction: Parameters<NonNullable<typeof appWindow>['startResizeDragging']>[0]
+) => {
+  if (!appWindow) {
+    console.error('appWindow should exist!')
+    return
+  }
+
+  // with the normal left click only, single click only
+  if (event.buttons === 1 && event.detail === 1) {
+    appWindow.startResizeDragging(direction)
+  }
+}
+
 // ─── Tauri ────────────────────────────────────────────────────────── end ───
 </script>
 
 <template>
   <main
-    class="flex h-dvh flex-col [--titlebar-height:--spacing(8)]"
+    class="flex h-dvh flex-col [--corner-offset:--spacing(16)] [--inset:--spacing(2)] [--titlebar-height:--spacing(8)]"
     :class="[windowTransparency ? 'bg-sidebar/80' : 'bg-sidebar']"
+    @contextmenu.prevent
   >
-    <div
-      v-if="isApp && !nativeDecorations"
-      v-show="!isFullscreen"
-      data-slot="titlebar"
-      data-tauri-drag-region
-      class="-mb-2 flex h-(--titlebar-height) items-center justify-between"
-      @pointerdown.stop
-    >
-      <div class="pointer-events-none ps-3 pe-2">
-        <img src="/logo.svg" class="h-4" />
-      </div>
+    <template v-if="isApp && !nativeDecorations">
+      <!-- Resize handlers -->
+      <!-- NOTE: North (top) handler is not handled since that space is for the titlebar -->
       <div
-        v-if="appWindow"
-        class="z-377 [&_button]:pointer-events-auto [&_button]:rounded-none [&_button]:backdrop-blur-none"
+        class="absolute top-(--titlebar-height) bottom-(--corner-offset) left-0 w-(--inset) cursor-w-resize"
+        @mousedown="resize($event, 'West')"
+      />
+      <div
+        class="absolute bottom-0 left-0 size-(--corner-offset) cursor-sw-resize"
+        @mousedown="resize($event, 'SouthWest')"
+      />
+      <div
+        class="absolute inset-x-(--corner-offset) bottom-0 h-(--inset) cursor-s-resize"
+        @mousedown="resize($event, 'South')"
+      />
+      <div
+        class="absolute right-0 bottom-0 size-(--corner-offset) cursor-se-resize"
+        @mousedown="resize($event, 'SouthEast')"
+      />
+      <div
+        class="absolute top-(--titlebar-height) right-0 bottom-(--corner-offset) w-(--inset) cursor-e-resize"
+        @mousedown="resize($event, 'East')"
+      />
+
+      <!-- Custom titlebar -->
+      <div
+        v-show="!isFullscreen"
+        data-slot="titlebar"
+        data-tauri-drag-region
+        class="-mb-2 flex h-(--titlebar-height) items-center justify-between"
+        @pointerdown.stop
       >
-        <Updater />
-        <span class="bg-border/50 mx-1 inline-block h-4 w-px first:hidden" />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          tabindex="-1"
-          @click="appWindow.minimize()"
-          class="text-muted-foreground"
+        <div class="pointer-events-none ps-3 pe-2">
+          <img src="/logo.svg" class="h-4" />
+        </div>
+        <div
+          v-if="appWindow"
+          class="z-377 [&_button]:pointer-events-auto [&_button]:rounded-none [&_button]:backdrop-blur-none"
         >
-          <Minus />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          tabindex="-1"
-          @click="appWindow.toggleMaximize()"
-          class="text-muted-foreground"
-        >
-          <SquaresIntersect v-if="isAppMaximized" />
-          <SquareDashedTopSolid v-else />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          tabindex="-1"
-          @click="appWindow.close()"
-          class="text-muted-foreground hover:text-destructive w-9 pr-1 hover:[&>svg]:stroke-3"
-        >
-          <X />
-        </Button>
+          <Updater />
+          <span class="bg-border/50 mx-1 inline-block h-4 w-px first:hidden" />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            tabindex="-1"
+            @click="appWindow.minimize()"
+            class="text-muted-foreground"
+          >
+            <Minus />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            tabindex="-1"
+            @click="appWindow.toggleMaximize()"
+            class="text-muted-foreground"
+          >
+            <SquaresIntersect v-if="isAppMaximized" />
+            <SquareDashedTopSolid v-else />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            tabindex="-1"
+            @click="appWindow.close()"
+            class="text-muted-foreground hover:text-destructive w-9 pr-1 hover:[&>svg]:stroke-3"
+          >
+            <X />
+          </Button>
+        </div>
       </div>
-    </div>
+    </template>
 
     <!-- Main App -->
     <section
       data-vaul-drawer-wrapper
-      class="bg-background outline-border/50 relative z-0 flex min-h-0 flex-1 flex-col overflow-hidden outline-2 [--inset:--spacing(2)]"
+      class="bg-background outline-border/50 relative z-0 flex min-h-0 flex-1 flex-col overflow-hidden outline-2"
       :class="[!isFullscreen && 'm-(--inset) rounded-lg']"
     >
       <div class="absolute inset-0 -z-10">
