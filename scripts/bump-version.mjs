@@ -8,6 +8,19 @@ const BUMP = process.argv[2] ?? 'patch' // can be any pnpm supports
 // Enter root dir
 process.chdir(execSync('git rev-parse --show-toplevel').toString().trim())
 
+// Allow script to only run on main
+const BRANCH = execSync('git rev-parse --abbrev-ref HEAD').toString().trim()
+if (BRANCH !== 'main') {
+  console.error(styleText('red', `script should onlt be run on main (you are on '${BRANCH}')`))
+  process.exit(1)
+}
+// Pull and ensure main is upto date
+execSync('git fetch --quiet origin main')
+if (execSync('git rev-list --count HEAD..origin/main').toString().trim() !== '0') {
+  console.error(styleText('red', 'main is behind origin. please pull first!'))
+  process.exit(1)
+}
+
 // bump lachesis version
 execSync(`cd apps/lachesis && pnpm version ${BUMP} --no-git-tag-version`)
 
