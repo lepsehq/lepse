@@ -7,7 +7,7 @@ const source = inject(bubbleNavSourceKey)
 
 const { user } = useAuth()
 const { $client } = useNuxtApp()
-const { useSocketState } = useSocket()
+const { useSocketState, socket } = useSocket()
 const { id, connection, join, leave } = useLoungeClient()
 const { state } = useSocketState()
 
@@ -35,7 +35,17 @@ const { copy, copied } = useClipboard()
     :action="async () => (await navigateTo('/'), await navigateTo('/login'))"
   />
   <Gatekeep v-else-if="!user.emailVerified" title="Please verify your email to join lounges." />
-  <Gatekeep v-else-if="state !== 'connected'" title="Connecting to websocket..." />
+  <Gatekeep
+    v-else-if="state === 'connecting'"
+    title="Connecting to websocket..."
+    :show-action="false"
+  />
+  <Gatekeep
+    v-else-if="state === 'disconnected'"
+    title="Not connected to websocket!"
+    action-label="Connect"
+    :action="() => socket.connect()"
+  />
 
   <div class="flex size-full flex-1 flex-col" :class="[source === 'drawer' && 'mx-auto max-w-sm']">
     <AnimatePresence mode="popLayout">

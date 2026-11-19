@@ -4,8 +4,8 @@ import { isTauri } from '@tauri-apps/api/core'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { camelCase } from 'change-case'
 
-const { provideSocket, socket } = useSocket()
-provideSocket(socket, { owned: true })
+const { provideSocket } = useSocket()
+provideSocket()
 
 useLoungeServer()
 

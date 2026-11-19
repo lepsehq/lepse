@@ -11,14 +11,17 @@ export const useSocket = createSharedComposable(() => {
     url: config.public.apiUrl,
     shouldReconnect: (e) => !!user.value,
   })
-  const { provideSocket, useChannel, useChannelEvent, useSocketState } =
-    createSocketComposables<AppSocket>()
+  const {
+    provideSocket,
+    useSocket: _useSocket,
+    ...socketComposables
+  } = createSocketComposables<AppSocket>()
 
   return {
     socket,
-    provideSocket,
-    useChannel,
-    useChannelEvent,
-    useSocketState,
+    provideSocket: (options?: Parameters<typeof provideSocket>['1']) => {
+      return provideSocket(socket, options)
+    },
+    ...socketComposables,
   }
 })
