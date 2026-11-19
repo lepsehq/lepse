@@ -1,5 +1,6 @@
 {
   "name": "@lepse/atropos",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "private": true,
   "scripts": {

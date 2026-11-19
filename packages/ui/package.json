@@ -1,6 +1,6 @@
 {
   "name": "@lepse/ui",
-  "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "description": "Shared Nuxt layer for Lepse's UI",
