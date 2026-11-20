@@ -15,8 +15,10 @@ export default defineCachedEventHandler(
     return {
       version: res.tag_name as string,
       assets: {
-        // Windows (only x64)
+        // Windows (x64 and a64)
         'x64.exe': res.assets.find((a) => a.label.includes('x64-setup.exe'))?.browser_download_url,
+        'a64.exe': res.assets.find((a) => a.label.includes('arm64-setup.exe'))
+          ?.browser_download_url,
         // Fedora (x64 and a64)
         'x64.rpm': res.assets.find((a) => a.label.includes('x86_64.rpm'))?.browser_download_url,
         'a64.rpm': res.assets.find((a) => a.label.includes('aarch64.rpm'))?.browser_download_url,

@@ -34,8 +34,8 @@ const platformDownloads = computed(() => [
         label: 'Download &nbsp;.exe',
         icon: LogosWindows,
         action: 'download',
-        link: release.value?.assets['x64.exe'],
-        supportedArches: ['x64'],
+        link: release.value?.assets[arch.value === 'x64' ? 'x64.exe' : 'a64.exe'],
+        supportedArches: ['x64', 'a64'],
       },
       // TODO: Microsoft Store (need to wait until Tauri supports .msix)
       // {
@@ -300,42 +300,33 @@ const scrollToNews = () => {
           <component :is="p.logo" class="size-24 fill-current" />
           <p class="mt-1 text-lg font-semibold tracking-wide">{{ p.name }}</p>
           <ButtonGroup class="mt-4">
-            <!-- If download options exist (to check when to show arch not supported) -->
-            <template v-if="p.actions.find((a) => a.supportedArches.includes(arch))">
-              <Button size="lg" as-child>
-                <a
-                  :href="p.actions[0]!.link"
-                  :target="p.actions[0]!.action === 'open' ? '_blank' : '_self'"
-                >
-                  <component :is="p.actions[0]!.icon" class="size-6 fill-current opacity-80" />
-                  <span v-html="p.actions[0]!.label" />
-                </a>
-              </Button>
+            <Button size="lg" as-child>
+              <a
+                :href="p.actions[0]!.link"
+                :target="p.actions[0]!.action === 'open' ? '_blank' : '_self'"
+              >
+                <component :is="p.actions[0]!.icon" class="size-6 fill-current opacity-80" />
+                <span v-html="p.actions[0]!.label" />
+              </a>
+            </Button>
 
-              <DropdownMenu v-if="p.actions.length > 1">
-                <DropdownMenuTrigger as-child>
-                  <Button size="icon-lg" aria-label="more options">
-                    <ChevronDown />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <template v-for="a in p.actions.slice(1)" :key="a.label">
-                    <DropdownMenuItem v-if="a.supportedArches.includes(arch)" as-child>
-                      <a :href="a.link" :target="a.action === 'open' ? '_blank' : '_self'">
-                        <component :is="a.icon" class="fill-current" />
-                        <span v-html="a.label" />
-                      </a>
-                    </DropdownMenuItem>
-                  </template>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </template>
-            <template v-else>
-              <Button variant="link" size="lg" disabled>
-                <X class="text-destructive" />
-                <p class="">{{ arch === 'x64' ? 'x64_86' : 'aarch64' }} not supported</p>
-              </Button>
-            </template>
+            <DropdownMenu v-if="p.actions.length > 1">
+              <DropdownMenuTrigger as-child>
+                <Button size="icon-lg" aria-label="more options">
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <template v-for="a in p.actions.slice(1)" :key="a.label">
+                  <DropdownMenuItem v-if="a.supportedArches.includes(arch)" as-child>
+                    <a :href="a.link" :target="a.action === 'open' ? '_blank' : '_self'">
+                      <component :is="a.icon" class="fill-current" />
+                      <span v-html="a.label" />
+                    </a>
+                  </DropdownMenuItem>
+                </template>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </ButtonGroup>
         </div>
       </div>
@@ -343,8 +334,7 @@ const scrollToNews = () => {
       <p
         class="text-muted-foreground mt-2 max-w-prose text-center text-xs font-light tracking-wide"
       >
-        * [Linux] Flathub is the recommended way to install Lepse. The others may be unstable since
-        it will always use the system webview.
+        * [Linux] Flathub is the recommended way to install Lepse.
       </p>
     </div>
 
@@ -400,7 +390,7 @@ const scrollToNews = () => {
               target="_blank"
               class="text-primary hover:underline"
               >open source</a
-            >.*
+            >.
           </p>
           <div class="flex justify-between gap-1 text-sm">
             <p>© 2026 Lepse.</p>
@@ -417,8 +407,7 @@ const scrollToNews = () => {
         </div>
 
         <div class="text-muted-foreground mt-8 text-center text-xs">
-          <p>*All of the code is public and contributions are appreciated.</p>
-          <p>The app is fully open source, the rest are technically Source Available.</p>
+          <p>Copyright © {{ new Date().getFullYear() }} LepseHQ. Made with 💚 on the internet.</p>
         </div>
       </div>
     </div>
