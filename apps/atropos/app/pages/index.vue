@@ -357,10 +357,30 @@ const scrollToNews = () => {
     </div>
 
     <!-- Footer -->
-    <div class="from-primary/16 bg-muted/32 border-t bg-linear-to-b p-8 pb-4 sm:bg-linear-to-br">
+    <div
+      class="from-primary/8 bg-muted/32 relative overflow-hidden border-t bg-linear-to-b p-8 pb-4 sm:bg-linear-to-br"
+    >
+      <img
+        src="/logo-text.svg"
+        alt="logo"
+        class="absolute inset-x-0 bottom-0 w-full translate-y-1/2 mask-t-from-0% opacity-20 grayscale sm:translate-y-3/5"
+      />
+
       <div class="mx-auto flex w-full max-w-5xl flex-col">
-        <div class="flex gap-x-8 gap-y-4 max-sm:flex-col max-sm:items-center sm:justify-between">
-          <img src="/logo.svg" alt="logo" class="h-8 w-fit" />
+        <div class="flex gap-x-8 gap-y-6 max-sm:flex-col max-sm:items-center sm:justify-between">
+          <div class="size-20">
+            <PaperGemSmoke
+              image="/favicon.svg"
+              :colors="['#0F2D1D', '#D3EFDF']"
+              color-inner="#36995F"
+              color-back="#00000000"
+              :speed="1"
+              :size="0.8"
+              :scale="1"
+              :angle="70"
+              :outer-distortion="0"
+            />
+          </div>
 
           <div class="flex gap-1">
             <Tooltip
@@ -382,7 +402,7 @@ const scrollToNews = () => {
           </div>
         </div>
 
-        <div class="text-muted-foreground mt-4 flex flex-col gap-2 max-sm:items-center-safe">
+        <div class="text-muted-foreground mt-6 flex flex-col gap-2 max-sm:items-center-safe">
           <p>
             Lepse is
             <a
@@ -393,7 +413,7 @@ const scrollToNews = () => {
             >.
           </p>
           <div class="flex justify-between gap-1 text-sm">
-            <p>© 2026 Lepse.</p>
+            <p>© {{ new Date().getFullYear() }} LepseHQ.</p>
             <p class="italic">
               built by
               <a
@@ -406,8 +426,8 @@ const scrollToNews = () => {
           </div>
         </div>
 
-        <div class="text-muted-foreground mt-8 text-center text-xs">
-          <p>Copyright © {{ new Date().getFullYear() }} LepseHQ. Made with 💚 on the internet.</p>
+        <div class="text-muted-foreground mt-16 text-center text-xs">
+          <p>Made with 💚 on the internet.</p>
         </div>
       </div>
     </div>
