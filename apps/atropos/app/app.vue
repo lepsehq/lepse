@@ -18,7 +18,7 @@
     <Meta property="og:title" content="Lepse" />
     <Meta
       property="og:description"
-      content="A minimal and aesthetic productivity tool to help you focus on what matters and work toward your goals. Its aim is to make being productive simpler, more enjoyable, comfortable, and easy."
+      content="A minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends."
     />
     <Meta property="og:type" content="website" />
     <Meta property="og:url" content="https://lepse.app/" />
@@ -32,7 +32,7 @@
     <Meta name="twitter:title" content="Lepse" />
     <Meta
       name="twitter:description"
-      content="A minimal and aesthetic productivity tool to help you focus on what matters and work toward your goals. Its aim is to make being productive simpler, more enjoyable, comfortable, and easy."
+      content="A minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends."
     />
     <Meta name="twitter:image" content="https://cdn.lepse.app/og.png" />
     <Meta name="twitter:image:alt" content="Lepse logo on a minimal gradient background" />

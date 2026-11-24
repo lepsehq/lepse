@@ -26,7 +26,7 @@ export default defineNuxtConfig({
         {
           property: 'og:description',
           content:
-            'A minimal and aesthetic productivity tool to help you focus on what matters and work toward your goals. Its aim is to make being productive simpler, more enjoyable, comfortable, and easy.',
+            'A minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://lepse.app/' },
@@ -41,7 +41,7 @@ export default defineNuxtConfig({
         {
           name: 'twitter:description',
           content:
-            'A minimal and aesthetic productivity tool to help you focus on what matters and work toward your goals. Its aim is to make being productive simpler, more enjoyable, comfortable, and easy.',
+            'A minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends.',
         },
         { name: 'twitter:image', content: 'https://cdn.lepse.app/og.png' },
         { name: 'twitter:image:alt', content: 'Lepse logo on a minimal gradient background' },

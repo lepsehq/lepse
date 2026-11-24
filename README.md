@@ -21,7 +21,7 @@
 <!-- TODO: Screenshot in GIF -->
 <img src="https://cdn.lepse.app/lachesis-app-screenshots/lepse-home.png" />
 
-Lepse is a minimal and aesthetic productivity tool to help you focus on what matters and work toward your goals. Its aim is to make being productive simpler, more enjoyable, comfortable, and easy.
+Lepse is a minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends.
 
 > I've tried other apps, but I always got overwhelmed, so I created Lepse. (ps. During breaks, I always found myself staring at a clock, shout-out [relaxingclock](https://relaxingclock-com.netlify.app/))
 

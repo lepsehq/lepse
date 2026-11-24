@@ -28,12 +28,31 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/color-mode', '@nuxtjs/device'],
+  modules: ['@nuxtjs/color-mode', '@nuxtjs/device', '@nuxtjs/seo'],
 
   runtimeConfig: {
     public: {
       webUrl: process.env.NUXT_PUBLIC_WEB_URL || 'https://os.lepse.app',
     },
     githubToken: '',
+  },
+
+  // SEO
+  site: {
+    url: 'https://lepse.app',
+    name: 'Lepse',
+    description:
+      'A minimal and aesthetic productivity tool designed to make being productive simpler, more enjoyable, and easier, with a pomodoro timer, a relaxing clock, and lounges to study together with friends.',
+    defaultLocale: 'en',
+  },
+  ogImage: false,
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'Lepse',
+      logo: '/logo.svg',
+      url: 'https://lepse.app',
+      sameAs: ['https://github.com/lepsehq', 'https://www.reddit.com/r/lepse'],
+    },
   },
 })
